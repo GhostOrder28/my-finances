@@ -1,0 +1,4 @@
+# frontend.
+
+* add edition and deletion buttons.
+* add sass to the project so I can use variables and implement the color change for the tabs in the sale page.
