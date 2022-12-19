@@ -23,4 +23,4 @@ pnpm-debug.log*
 
 # server
 
-./server/.env
+/server/.env
