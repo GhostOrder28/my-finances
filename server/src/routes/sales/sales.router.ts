@@ -1,9 +1,17 @@
 import express from 'express';
-import { httpPostSale } from './sales.controller';
+import { 
+  httpSubPostSale, 
+  httpSubPatchSale, 
+  httpSubDeleteSale, 
+} from './sales.controller';
+import paymentsRouter from '../payments/payments.router';
 
-const salesRouter = express.Router();
+const salesRouter = express.Router({ mergeParams: true });
 
-salesRouter.post('/:userid/:clientid', httpPostSale);
-salesRouter.put('/:userid/:clientid', httpPostSale);
+salesRouter.patch('/', httpSubPostSale);
+salesRouter.patch('/:saleid', httpSubPatchSale);
+salesRouter.patch('/:saleid', httpSubDeleteSale);
+
+salesRouter.use('/:saleid/payments', paymentsRouter)
 
 export default salesRouter;

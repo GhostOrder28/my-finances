@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
+import { User } from "../../types/auth.types";
 
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
-  name: {
+const userSchema = new Schema<User>({
+  username: {
     type: String,
     required: true,
   }, 
@@ -16,15 +17,20 @@ const userSchema = new Schema({
     required: true,
     min: [ 6, 'La contraseña debe tener al menos 6 caracteres.' ]
   },
+  receivables: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  debtors: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   creationDate: {
     type: Date,
     default: Date.now
-  }
+  },
 });
 
-const userModel = mongoose.model('User', userSchema);
-
-export {
-  userModel,
-}
-
+export default mongoose.model('User', userSchema);

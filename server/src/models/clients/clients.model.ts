@@ -1,21 +1,41 @@
 import clientsSchema from "./clients.schema";
-import { Client } from "../../types/client.types";
+import { ClientEditableFields } from "../../types/client.types";
 
-async function postClient (userId: string, body: Client) {
-  const { name, nameDetails, contactPhone } = body;
+async function postClient (userId: string, body: ClientEditableFields) {
   const client = new clientsSchema({
     userId,
-    name,
-    nameDetails,
-    contactPhone,
-    sales: [],
-    totalDebtValue: 0,
-    totalSalesValue: 0,
+    ...body,
   });
-  const clientData = await client.save();
-  console.log(clientData);
+
+  return await client.save();
+};
+
+async function patchClient (clientId: string, body: ClientEditableFields) {
+  const { clientName, nameDetails, contactPhone } = body;
+  const query = { _id: clientId };
+
+  const update = {
+    $set: { 
+      clientName,
+      nameDetails,
+      contactPhone,
+    }
+  };
+
+  const options = { new: true };
+
+  const payload = await clientsSchema.findOneAndUpdate(query, update, options);
+
+  return payload;
+};
+
+async function getClients (userId: string) {
+  const clients = await clientsSchema.find({ userId });
+  return clients;
 };
 
 export {
   postClient,
+  patchClient,
+  getClients,
 }

@@ -1,13 +1,17 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
+import salesSchema from "../sales/sales.schema";
+import { Client } from "../../types/client.types";
 
 const { Schema } = mongoose;
 
-const clientSchema = new Schema({
+
+const clientSchema = new Schema<Client>({
+  // @ts-ignore: Unreachable code error
   userId: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     required: true,
   },
-  name: {
+  clientName: {
     type: String,
     required: true,
   },
@@ -20,16 +24,19 @@ const clientSchema = new Schema({
     required: false,
   },
   sales: {
-    type: [ Schema.Types.ObjectId ],
+    type: [ salesSchema ],
     required: true,
+    default: [],
   },
-  totalDebtValue: {
+  currentDebt: {
     type: Number,
     required: true,
+    default: 0,
   },
   totalSalesValue: {
     type: Number,
     required: true,
+    default: 0,
   }
 });
 

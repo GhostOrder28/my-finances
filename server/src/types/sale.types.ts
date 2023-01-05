@@ -1,33 +1,28 @@
-type SaleItem = {
+import { Types } from "mongoose";
+import { Payment } from "./payment.types";
+
+type Item = {
+  _id: Types.ObjectId;
   name: string;
   quantity: number;
   price: number;
 }
 
-type PaymentItem = {
+type Sale = {
+  _id: Types.ObjectId;
   date: Date;
-  amount: number;
-  details: string;
-}
-
-type SaleRequestBody = {
-  clientName: string;
-  date: Date;
-  initialPayment?: Number;
-  items: SaleItem[];
-  payments: PaymentItem[];
-  totalValue: number;
+  items: Item[];
+  payments: Payment[];
+  saleValue: number;
   paidAmount: number;
-  debt: number;
+  unpaidAmount: number;
 }
 
-type Sale = SaleRequestBody & {
-  userId: string;
-  clientId: string;
-}
+type SaleRequestBody = Pick<Sale, 'date' | 'items' | 'payments'>
 
 export {
-  SaleRequestBody,
-  SaleItem,
+  Item,
+  Payment,
   Sale,
+  SaleRequestBody,
 }

@@ -1,4 +1,62 @@
-# frontend.
-
+# Frontend.
 * add edition and deletion buttons.
 * add sass to the project so I can use variables and implement the color change for the tabs in the sale page.
+## Frontend TODOS.
+* When the user post/patch a payment he should be sent to the sale detail page with the payments tab selected and the posted/patched payment highlighted for less than a second, for this the server will send the payment id as a response.
+
+# backend.
+
+## endpoints implemented []
+* Auth [x]
+  * POST /auth/signin
+  * POST /auth/signup
+* Clients []
+  * GET /clients/:userid []
+  * POST /clients/:userid [x]
+  * PATCH /clients/:clientid [x]
+* Sales [x]
+  * PATCH /clients/:clientid/sales (sub post)
+  * PATCH /clients/:clientid/sales/:saleid (sub patch)
+  * PATCH /clients/:clientid/sales/:saleid?delete=true (sub delete)
+* Payments [x]
+  * PATCH /clients/:clientid/sales/:saleid/payments (sub post)
+  * PATCH /clients/:clientid/sales/:saleid/payments/:paymentid (sub put)
+  * PATCH /clients/:clientid/sales/:saleid/payments/:paymentid?delete=true (sub delete)
+
+* GET /client/:userid/:clientid
+  * Here I will need to query for the sales data also.
+  * This endpoint can be re-used when entering the `editclient` page, but I will need to omit returning the sales array in the response.
+* GET /sales/:userid/:clientid/:saleid
+  * Here I will need to query for the payment data also.
+  * This endpoint can be re-used when entering the `editsale` pge, but I will need to omit returning the payments array in the response.
+
+## Server side validation []
+* Number shoudn't be lesser than 0.
+  * `unpaidAmount` in `sales` sub-document shouldn't be lesser than 0 []
+  * `currentDebt` field in `clients` document shoudn't be lesser than 0 []
+  * `receivables` field in `users` document shouldn't be lesser than 0 []
+
+## Error handling []
+* global error handler []
+* payments.
+  * custom errors in model [x]
+  * custom error handling in controller []
+* sales.
+  * custom error in model []
+  * custom error handling in controller []
+* clients.
+  * custom error in model []
+  * custom error handling in controller []
+* users.
+  * custom error in model []
+  * custom error handling in controller []
+
+## Server proper response and not just the entire document.
+* payments [x]
+* sales []
+* clients []
+* users []
+
+# Ideas. 
+* Instead of allowing the user to change the client name in the sale edition page, it would be better to implement a button to explictly `assign this sale to a different client`, from the backend perspective performing the neccesary queries to accomplish this is much easier than performing a client name search and getting the id for assign it to the clientId field in the sale document.
+* When adding a new payment there should be two options: payment for a product and partial payment.

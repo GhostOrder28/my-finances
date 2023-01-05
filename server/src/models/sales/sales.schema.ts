@@ -1,87 +1,60 @@
 import mongoose from "mongoose";
-import { SaleItem, Sale } from '../../types/sale.types';
+import paymentsSchema from "../payments/payments.schema";
+import { Item, Sale } from '../../types/sale.types';
 
 const { Schema } = mongoose;
 
-const saleSchema = new Schema({
-  clientId: {
+const itemsSchema = new Schema<Item>({
+  name: {
     type: String,
     required: true,
   },
-  userId: {
-    type: String,
+  quantity: {
+    type: Number,
     required: true,
   },
-  clientName: {
-    type: String,
+  price: {
+    type: Number,
     required: true,
   },
+});
+
+const salesSchema = new Schema<Sale>({
   date: {
     type: Date,
     required: true,
     default: Date.now,
   },
   items: {
-    type: [{
-      name: {
-        type: String,
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-      },
-      price: {
-        type: Number,
-        required: true,
-      }
-    }],
+    type: [ itemsSchema ],
     required: true,
-    validate: [ minimumItems, 'Es necesario al menos un item' ],
+    default: [],
   },
   payments: {
-    type: [{
-      date: {
-        type: Date,
-        required: true,
-        default: Date.now,
-      },
-      amount: {
-        type: Number,
-        required: true,
-      },
-      details: {
-        type: String,
-        required: false,
-      }
-    }]
+    type: [ paymentsSchema ],
+    required: true,
+    default: [],
   },
-  totalValue: {
+  saleValue: {
     type: Number,
     required: true,
-    default: function (this: Sale) {
-      const totalValue = this.items.reduce((acc, curr) => {
-        return acc + curr.price;
-      }, 0);
-      return totalValue;
-    }
+    default: 0,
   },
   paidAmount: {
     type: Number,
     required: true,
     default: 0,
   },
-  debt: {
+  unpaidAmount: {
     type: Number,
     required: true,
-    default: function (this: Sale) {
-      return this.totalValue - this.paidAmount;
-    }
+    default: 0,
+    min: [ 0, 'El pago que intentas añadir es mayor que la deuda' ]
   }
 });
 
-function minimumItems (val: SaleItem[]) {
+function minimumItems (val: Item[]) {
   return val.length > 0;   
 };
 
-export default mongoose.model('Sale', saleSchema);
+export default salesSchema;
