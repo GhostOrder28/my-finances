@@ -1,6 +1,6 @@
-import mongoose, { mongo } from "mongoose";
-import clientsSchema from "../clients/clients.schema";
-import { Sale, SaleRequestBody, Item, Payment } from "../../types/sale.types";
+import mongoose from "mongoose";
+import clientsCollection from "../clients/clients.schema";
+import { SaleRequestBody, Item, Payment } from "../../types/sale.types";
 import { NotFoundError } from "../../errors/db-errors";
 
 const { Types: { ObjectId } } = mongoose;
@@ -40,7 +40,7 @@ async function postSale (clientId: string,  body: SaleRequestBody) {
             _id: new ObjectId(),
           } ] ]
         },
-        totalSalesValue: { $sum: [ '$totalSalesValue', saleValue ] },
+        clientSalesValue: { $sum: [ '$clientSalesValue', saleValue ] },
         currentDebt: { $sum: [ '$currentDebt', unpaidAmount ] },
       }
     },
@@ -48,12 +48,12 @@ async function postSale (clientId: string,  body: SaleRequestBody) {
 
   const options = { new: true };
 
-  const payload = await clientsSchema.findOneAndUpdate(query, update, options);   
+  const payload = await clientsCollection.findOneAndUpdate(query, update, options);   
 
   if (payload) {
     return payload.sales.slice(-1)[0]._id;
   } else {
-    if (payload === null) throw new NotFoundError(`No se pudo añadir o actualizar la venta, el cliente no existe.`)
+    if (payload === null) throw new NotFoundError(`No se pudo registrar la venta, el cliente no existe.`)
   };
 
 };
@@ -85,7 +85,7 @@ async function patchSale (clientId: string, saleId: string, body: Omit<SaleReque
     },
     {
       $set: {
-        totalSalesValue: { $sum: '$sales.saleValue' },
+        clientSalesValue: { $sum: '$sales.saleValue' },
         currentDebt: { $sum: '$sales.unpaidAmount' },
       }
     }
@@ -93,13 +93,17 @@ async function patchSale (clientId: string, saleId: string, body: Omit<SaleReque
 
   const options = { new: true };
 
-  const dbResponse = await clientsSchema.findOneAndUpdate(query, update, options);
+  try {
+    const dbResponse = await clientsCollection.findOneAndUpdate(query, update, options);
+    if (dbResponse) {
+      return saleId;
+    } else {
+      throw new NotFoundError(`No se pudo actualzar la venta, el cliente no existe.`)
+    };
+  } catch (err) {
+    throw new Error(`there was an error: ${err}`)
+  }
 
-  if (dbResponse) {
-    return dbResponse.sales.slice(-1)[0]._id;
-  } else {
-    if (dbResponse === null) throw new NotFoundError(`No se pudo añadir o actualizar la venta, el cliente no existe.`)
-  };
 };
 
 async function deleteSale (clientId: string, saleId: string) {
@@ -120,7 +124,7 @@ async function deleteSale (clientId: string, saleId: string) {
     }, 
     {
       $set: {
-        totalSalesValue: { $sum: '$sales.saleValue' },
+        clientSalesValue: { $sum: '$sales.saleValue' },
         currentDebt: { $sum: '$sales.unpaidAmount' },
       }
     }
@@ -128,7 +132,16 @@ async function deleteSale (clientId: string, saleId: string) {
 
   const options = { new: true };
 
-  return await clientsSchema.findOneAndUpdate(query, update, options);
+  try {
+    const dbResponse = await clientsCollection.findOneAndUpdate(query, update, options);
+    if (dbResponse) {
+      return saleId
+    } else {
+      throw new NotFoundError(`No se pudo eliminar la venta, el cliente no existe.`)
+    };
+  } catch (err) {
+    throw new Error(`there was an error: ${err}`)
+  }
 }; 
 
 export {

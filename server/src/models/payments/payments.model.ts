@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import clientsSchema from "../clients/clients.schema";
+import clientsCollection from "../clients/clients.schema";
 import { Payment } from "../../types/sale.types";
 import { ClientDocumentResponse } from "../../types/client.types";
 import { NotFoundError } from '../../errors/db-errors';
 
 const { Types: { ObjectId } } = mongoose;
 
-function calculatePaidAmount (saleId: string) {
+function calculatePaidAmountStage (saleId: string) {
   return {
     $set: {
       sales: {
@@ -30,7 +30,7 @@ function calculatePaidAmount (saleId: string) {
   }
 };
 
-function calculateUnpaidAmount (saleId: string ) {
+function calculateUnpaidAmountStage (saleId: string ) {
   return {
     $set: {
       sales: {
@@ -54,7 +54,7 @@ function calculateUnpaidAmount (saleId: string ) {
   }
 };
 
-function calculateCurrentDebt () {
+function calculateCurrentDebtStage () {
   return {
     $set: {
       currentDebt: { $sum: '$sales.unpaidAmount' }
@@ -62,7 +62,7 @@ function calculateCurrentDebt () {
   }   
 };
 
-function getPaymentId (saleId: string, dbResponse: ClientDocumentResponse) {
+function getPaymentIdFromClientDoc (saleId: string, dbResponse: ClientDocumentResponse) {
   const sale = dbResponse?.sales.find(s => s._id.toString() === saleId);
   const newPaymentId = sale?.payments?.slice(-1)[0]._id;
   return newPaymentId;
@@ -96,18 +96,18 @@ async function postPayment (clientId: string, saleId: string, body: Omit<Payment
         },
       }
     },
-    calculatePaidAmount(saleId),
-    calculateUnpaidAmount(saleId),
-    calculateCurrentDebt()
+    calculatePaidAmountStage(saleId),
+    calculateUnpaidAmountStage(saleId),
+    calculateCurrentDebtStage()
   ];
   const options = { new: true };
 
   try {
-    const dbResponse = await clientsSchema.findOneAndUpdate(query, update, options);   
+    const dbResponse = await clientsCollection.findOneAndUpdate(query, update, options);   
     if (dbResponse) {
-      return getPaymentId(saleId, dbResponse);
+      return getPaymentIdFromClientDoc(saleId, dbResponse);
     } else {
-      throw new NotFoundError(`document not found >> dbResponse value: ${dbResponse}`);
+      throw new NotFoundError('No se pudo registrar el pago, el cliente no existe');
     };
   } catch (err) {
     throw new Error(`there was an error: ${err}`)
@@ -152,15 +152,15 @@ async function patchPayment (clientId: string, saleId: string, paymentId: string
         }
       }
     },
-    calculatePaidAmount(saleId),
-    calculateUnpaidAmount(saleId),
-    calculateCurrentDebt()
+    calculatePaidAmountStage(saleId),
+    calculateUnpaidAmountStage(saleId),
+    calculateCurrentDebtStage()
   ];
   const options = { new: true };
 
 
   try {
-    const dbResponse = await clientsSchema.findOneAndUpdate(query, update, options);   
+    const dbResponse = await clientsCollection.findOneAndUpdate(query, update, options);   
     if (dbResponse) {
       return paymentId;
     } else {
@@ -203,15 +203,14 @@ async function deletePayment (clientId: string, saleId: string, paymentId: strin
         }
       },
     },
-    calculatePaidAmount(saleId),
-    calculateUnpaidAmount(saleId),
-    calculateCurrentDebt()
+    calculatePaidAmountStage(saleId),
+    calculateUnpaidAmountStage(saleId),
+    calculateCurrentDebtStage()
   ];
   const options = { new: true };
-
   
   try {
-    const dbResponse = await clientsSchema.findOneAndUpdate(query, update, options);
+    const dbResponse = await clientsCollection.findOneAndUpdate(query, update, options);
     if (dbResponse) {
       return paymentId;
     } else {

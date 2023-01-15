@@ -1,19 +1,19 @@
 import { Request, Response } from "express";
-import { signup, signin } from "../../models/users/users.model";
-import { UserCredentials, SignupData } from "../../types/auth.types";
+import { getUserAssets } from "../../models/users/users.model";
 
-async function httpSignup (req: Request<any, any, SignupData>, res: Response) {
-  const userCredentials = await signup(req.body);
-  return res.status(200).json({ userCredentials })
+type Params = { userid: string };
+
+async function httpGetUserAssets (req: Request<Params>, res: Response) {
+  const { userid } = req.params;
+
+  try {
+    const userAssets = await getUserAssets(userid);
+    return res.status(201).json({ userAssets });
+  } catch (err) {
+    throw new Error(`there was an error: ${err}`)
+  }
 }
 
-async function httpSignin (req: Request<any, any, UserCredentials>, res: Response) {
-  const { email, password } = req.body;
-  const userData = await signin(email, password);
-  return res.status(200).json({ userData })
-};
-
 export {
-  httpSignup,
-  httpSignin,
+  httpGetUserAssets,
 }

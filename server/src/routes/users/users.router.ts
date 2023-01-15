@@ -1,10 +1,8 @@
-import passport from 'passport';
 import express from 'express';
-import { httpSignup, httpSignin } from './users.controller';
+import { httpGetUserAssets } from './users.controller';
 
-const authRouter = express.Router();
+const usersRouter = express.Router();
 
-authRouter.post('/signup', httpSignup);
-authRouter.post('/signin', httpSignin);
+usersRouter.get('/:userid', httpGetUserAssets);
 
-export default authRouter;
+export default usersRouter;

@@ -1,6 +1,8 @@
 import mongoose, { Types } from "mongoose";
+// const { Types: { ObjectId } } = mongoose;
 import salesSchema from "../sales/sales.schema";
 import { Client } from "../../types/client.types";
+import { patchUserAssets } from '../users/users.model';
 
 const { Schema } = mongoose;
 
@@ -33,11 +35,14 @@ const clientSchema = new Schema<Client>({
     required: true,
     default: 0,
   },
-  totalSalesValue: {
+  clientSalesValue: {
     type: Number,
     required: true,
     default: 0,
   }
 });
+const clientsCollection = mongoose.model('Client', clientSchema);
 
-export default mongoose.model('Client', clientSchema);
+clientsCollection.watch<Client>([], { fullDocument: 'updateLookup' }).on('change', (data) => patchUserAssets(data));
+
+export default clientsCollection;

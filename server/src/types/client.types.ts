@@ -2,16 +2,17 @@ import mongoose, { Types } from 'mongoose';
 import { Sale } from "./sale.types" 
 
 type Client = {
+  _id: Types.ObjectId;
   userId: Types.ObjectId;
   clientName: string;
-  nameDetails: string;
+  clientNameDetails: string;
   contactPhone: string;
   sales: Sale[];
   currentDebt: number;
-  totalSalesValue: number;
+  clientSalesValue: number;
 }
 
-type ClientEditableFields = Pick<Client, 'clientName' | 'nameDetails' | 'contactPhone'>;
+type ClientEditableFields = Pick<Client, 'clientName' | 'clientNameDetails' | 'contactPhone'>;
 
 type ClientDocumentResponse = (mongoose.Document<unknown, any, Client> & Client & {
     _id: mongoose.Types.ObjectId;

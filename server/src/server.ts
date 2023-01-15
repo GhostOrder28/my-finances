@@ -21,8 +21,6 @@ import cors from 'cors';
 const server = https.createServer({
   cert: readFileSync(`${path.resolve()}/src/security/localhost.crt`),
   key: readFileSync(`${path.resolve()}/src/security/localhost.key`),
-  // cert: readFileSync(`${path.resolve()}/src/server.cert`),
-  // key: readFileSync(`${path.resolve()}/src/server.key`),
 }, app);
 
 const PORT = 3001;

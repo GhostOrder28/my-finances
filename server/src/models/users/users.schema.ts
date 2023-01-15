@@ -17,6 +17,11 @@ const userSchema = new Schema<User>({
     required: true,
     min: [ 6, 'La contraseña debe tener al menos 6 caracteres.' ]
   },
+  totalSalesValue: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   receivables: {
     type: Number,
     required: true,
