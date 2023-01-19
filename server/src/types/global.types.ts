@@ -1,3 +1,7 @@
+declare global {
+    interface Error { errorDetails: any; }
+}
+
 type DeleteQuery = { delete: string };
 type SingleQuery = { single: string };
 

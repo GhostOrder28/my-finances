@@ -10,12 +10,12 @@
   </div>
   <form @submit.prevent="handleSubmit">
     <div class="input-container">
-      <label for="name" class="f-rs">Nombre *</label>
-      <input v-model="formState.name" name="name" type="text" placeholder="Nombre del cliente">
+      <label for="clientName" class="f-rs">Nombre *</label>
+      <input v-model="formState.clientName" name="clientName" type="text" placeholder="Nombre del cliente">
     </div>
     <div class="input-container">
-      <label for="nameDetail" class="f-rs">Detalle del nombre</label>
-      <input v-model="formState.nameDetail" name="nameDetail" type="text" placeholder="amigo, vecino, etc">
+      <label for="clientNameDetails" class="f-rs">Detalle del nombre</label>
+      <input v-model="formState.clientNameDetails" name="clientNameDetails" type="text" placeholder="amigo, vecino, etc">
       <span class="tooltip">Esto es opcional, pero es útil para diferenciar entre dos personas con el mismo nombre.</span>
     </div>
     <div class="input-container">
@@ -32,13 +32,15 @@
 
 <script>
 import Icon from '@/components/icon'
+import http from '@/utils/axios-instance'
+
 export default {
   data () {
     return {
       sectionHeight: 0,
       formState: {
-        name: '',
-        nameDetail: '',
+        clientName: '',
+        clientNameDetails: '',
         contactPhone: '',
       }
     }
@@ -58,8 +60,14 @@ export default {
     }
   },
   methods: {
-    handleSubmit () {
+    async handleSubmit () {
+      const { clientName, clientNameDetails, contactPhone } = this.formState;
       console.log(JSON.stringify(this.formState, null, 2));
+      const res = await http.post(`/clients/${this.$store.state._id}`, {
+        clientName,
+        clientNameDetails,
+        contactPhone,
+      });
     }
   }
 }

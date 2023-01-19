@@ -17,6 +17,11 @@
       <input type="date" v-model="formState.date" name="date">
     </div>
 
+    <div class="input-container">
+      <label for="initialPayment" class="f-rs">Pago inicial</label>
+      <input type="number" v-model="formState.initialPayment" name="initialPayment">
+    </div>
+
     <div id="labels">
       <span class="f-rs">Producto / Cantidad</span>
       <span class="f-rs">Precio unitario</span>
@@ -65,13 +70,19 @@
 <script>
 import Icon from '@/components/icon'
 import { format } from 'date-fns'
-const itemInitialState = { name: '', quantity: 1, pricePerUnit: undefined };
+const itemInitialState = { 
+  name: '', 
+  quantity: 1, 
+  pricePerUnit: undefined 
+};
 export default {
   data () {
     return {
       itemsContainerHeight: 0,
       formState: {
         date: format(new Date(), 'yyyy-MM-dd'),
+        initialPayment: 0,
+        payments: [],
         items: [ { ...itemInitialState }, { ...itemInitialState } ],
       }
     }
@@ -91,6 +102,17 @@ export default {
       if (e.target.value.length !== 0 && idx === this.formState.items.length - 1) {
         this.formState.items = [ ...this.formState.items, { ...itemInitialState } ]
       }
+    }
+  },
+  watch: {
+    initialPayment (newValue, oldValue) {
+      if (newValue > 0) {
+        this.formState.payments = [{
+          date: this.formState.date,
+          amount: newValue,
+        }]
+      }
+      console.log(newValue);
     }
   },
   mounted () {

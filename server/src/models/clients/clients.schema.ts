@@ -17,7 +17,7 @@ const clientSchema = new Schema<Client>({
     type: String,
     required: true,
   },
-  nameDetails: {
+  clientNameDetails: {
     type: String,
     required: false,
   },

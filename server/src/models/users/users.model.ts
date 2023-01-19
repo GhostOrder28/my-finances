@@ -30,7 +30,6 @@ async function getUserAssets (userId: string) {
 
 // this function should be called also when the user is on the clientList page and from it he deletes a client
 async function patchUserAssets (data: ChangeStreamDocument<Client> | string) {
-  console.log('data: ', data);
   let userId;
   let updateFields;
 

@@ -1,4 +1,4 @@
-import express, { Response } from 'express';
+import express, { Response, Request } from 'express';
 import path from 'path';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -25,9 +25,9 @@ const app = express();
 
 passport.use(new LocalStrategy(AUTH_OPTIONS, verifyCallback));
 passport.serializeUser((userData, done) => {
-  console.log('serializing user: ', userData)
   // done(null, userData._id.toString()); // here typescript doesn't yell on vim but it does on the server
   done(null, (userData as User)._id.toString());
+  console.log('serializing user...');
 });
 passport.deserializeUser<string>((userId, done) => {
   // console.log('deserializing user: ', userId)
@@ -53,9 +53,9 @@ app.use(checkLoggedIn);
 
 app.use('/users', usersRouter);
 app.use('/clients', clientsRouter);
-app.get('/*', function (_, res: Response) {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
-});
+// app.get('/*', function (_, res: Response) { 
+//   res.sendFile(path.join(__dirname, "../public/index.html"));
+// });
 app.use(errorHandler);
 
 export default app;

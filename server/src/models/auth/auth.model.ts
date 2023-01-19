@@ -1,6 +1,7 @@
 import userModel from "../users/users.schema";
 import { SignupData } from "../../types/auth.types";
 import { DuplicateEntityError } from "../../errors/db-errors";
+import { AuthenticationError } from "../../errors/server-errors";
 import { Error } from "mongoose";
 import { MongoServerError } from 'mongodb';
 
@@ -22,10 +23,19 @@ async function signup (body: SignupData) {
   }
 };
 
-async function signin (email: string, password: string) {
+async function signin (email: string) {
   try {
     const userData = await userModel.findOne({ email });
-    return userData;
+    if (userData) {
+      return {
+        _id: userData._id,
+        username: userData.username,
+        email: userData.email,
+        password: userData.password
+      };
+    } else {
+      throw new AuthenticationError('Contraseña incorrecta o el usuario no exsite');
+    };
   } catch (err) {
     throw new Error(`there was an error: ${err}`)
   }

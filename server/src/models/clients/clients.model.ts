@@ -4,10 +4,14 @@ import usersSchema from '../users/users.schema';
 import { ClientEditableFields } from "../../types/client.types";
 import { NotFoundError } from "../../errors/db-errors";
 import { patchUserAssets } from '../users/users.model';
+import { strParseIn, strParseOut } from "../../utils/utility-functions";
 
 const { ObjectId } = Types;
 
 async function postClient (userId: string, body: ClientEditableFields) {
+  body.clientName = strParseIn(body.clientName);
+  body.clientNameDetails = strParseIn(body.clientNameDetails);
+
   const client = new clientsCollection({
     userId,
     ...body,
@@ -22,15 +26,13 @@ async function postClient (userId: string, body: ClientEditableFields) {
 };
 
 async function patchClient (clientId: string, body: ClientEditableFields) {
-  const { clientName, clientNameDetails, contactPhone } = body;
+  body.clientName = strParseIn(body.clientName);
+  body.clientNameDetails = strParseIn(body.clientNameDetails);
+
   const query = { _id: clientId };
 
   const update = {
-    $set: { 
-      clientName,
-      clientNameDetails,
-      contactPhone,
-    }
+    $set: { ...body }
   };
 
   const options = { new: true };
@@ -53,12 +55,19 @@ async function getClients (userId: string) {
     clientName: 1,
     clientNameDetails: 1,
     currentDebt: 1,
+    clientSalesValue: 1,
   };
   
   try {
     const clientList = await clientsCollection.find(query, projection);
+    // console.log(clientList);
     if (clientList) {
-      return clientList;
+      const parsedClientList = clientList.map((client) => ({
+        ...client.toObject(),
+        clientName: strParseOut(client.clientName),
+        clientNameDetails: strParseOut(client.clientNameDetails)
+      }));
+      return parsedClientList;
     } else {
       throw new Error('El usuario no existe');
     };

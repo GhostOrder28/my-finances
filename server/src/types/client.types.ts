@@ -12,6 +12,8 @@ type Client = {
   clientSalesValue: number;
 }
 
+type ClientListItem = Omit<Client, 'userId' | 'sales'>;
+
 type ClientEditableFields = Pick<Client, 'clientName' | 'clientNameDetails' | 'contactPhone'>;
 
 type ClientDocumentResponse = (mongoose.Document<unknown, any, Client> & Client & {
@@ -22,4 +24,5 @@ export {
   Client,
   ClientEditableFields,
   ClientDocumentResponse,
+  ClientListItem,
 }

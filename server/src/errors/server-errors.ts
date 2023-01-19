@@ -1,3 +1,5 @@
+import { ValidationErrorItem } from "../types/utils/utility-functions.types";
+
 class AuthorizationError extends Error {
   constructor(message: string) {
     super(message);
@@ -12,7 +14,16 @@ class AuthenticationError extends Error {
   }
 }
 
+class ValidationError extends Error {
+  constructor(message: string, errorDetails: ValidationErrorItem[]) {
+    super(message);
+    this.name = "ValidationError";
+    this.errorDetails = errorDetails;
+  }
+}
+
 export {
   AuthorizationError,
   AuthenticationError,
+  ValidationError
 }

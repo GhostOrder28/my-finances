@@ -24,3 +24,5 @@ pnpm-debug.log*
 # server
 
 /server/.env
+commit-messages-draft.rmd
+doubts.rmd

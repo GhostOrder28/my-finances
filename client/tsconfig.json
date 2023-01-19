@@ -16,9 +16,8 @@
       "webpack-env"
     ],
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": [ "src/*" ],
+      "#backend/*": [ "../server/src/types/*" ]
     },
     "lib": [
       "esnext",

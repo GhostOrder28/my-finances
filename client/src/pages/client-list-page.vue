@@ -23,37 +23,56 @@
           v-for="(client, idx) in clientList"
           :key="'client' + idx"
         >
-          <td class="f-rs">{{ client.name }}</td>
-          <td class="f-rs">{{ `S/ ${client.debt}` }}</td>
+          <td class="f-rs">{{ client.clientName }}</td>
+          <td class="f-rs">{{ `S/ ${client.currentDebt}` }}</td>
         </tr>
       </tbody>
     </table>
   </section>
-  <PopupButton label="Añadir cliente" />
+  <PopupButton type="link" label="Añadir cliente" url='newclient' />
 </template>
 
-<script>
-import PopupButton from '@/components/popup-button' 
-import StatItem from '@/components/stat-item'
+<script lang="ts">
+import PopupButton from '@/components/popup-button.vue' 
+import StatItem from '@/components/stat-item.vue'
 import { getReferenceHeight } from '@/utils/utility-functions'
+import http from '@/utils/axios-instance'
+import { ClientListItem } from '#backend/client.types'
+import { defineComponent } from 'vue'
+import { State, Methods, Refs } from '@/types/pages/client-list-page.types'
+import { Empty } from '@/types/global.types'
+
 // mocks
-import { clientList } from '@/mocks/clients.mock'
-export default {
+export default defineComponent<Empty, Empty, State, Empty, Methods>({
   data () {
     return {
-      clientList,
+      clientList: [],
       tbodyHeight: 0
+    }
+  },
+  methods: {
+    async getClients () {
+      try {
+        const res = await http.get<{ clientList: ClientListItem[] }>(`/clients/${this.$store.state._id}`);
+        console.log(res.data.clientList);
+        this.clientList = res.data.clientList
+      } catch (err) {
+        console.error(err);
+      }
     }
   },
   components: {
     StatItem,
     PopupButton
   },
+  async beforeMount () {
+    await this.getClients()
+  },
   mounted () {
-    const tbodyHeight = getReferenceHeight(this.$refs);
+    const tbodyHeight = getReferenceHeight(this.$refs as Refs);
     this.tbodyHeight = tbodyHeight;
   }
-}
+})
 </script>
 
 <style scoped>

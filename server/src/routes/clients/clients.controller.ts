@@ -8,13 +8,19 @@ import {
 } from "../../models/clients/clients.model";
 import { ClientEditableFields } from "../../types/client.types";
 import { SingleQuery, HttpUseridParam, HttpClientidParam } from "../../types/global.types";
-import { qsToBool } from "../../utils/utility-functions";
+import { qsToBool, strParseIn, strParseOut, getValidationErrorMessages } from "../../utils/utility-functions";
 import { checkCommonErrors } from "../../errors/utils";
+import clientValidators from "../../joi/client.validators";
+import { ValidationError } from "../../errors/server-errors";
 
 type httpDeleteOneClientParams = HttpUseridParam & HttpClientidParam;
 
 async function httpPostClient (req: Request<HttpUseridParam, any, ClientEditableFields>, res: Response, next: NextFunction) {
   const { userid } = req.params;
+
+  const { error } = clientValidators.validate(req.body, { abortEarly: false });
+  if (error) throw new ValidationError('there was an error validating the input', getValidationErrorMessages(error));
+
   try {
     const clientId = await postClient(userid, req.body);
     return res.status(201).json({ clientId });
@@ -26,6 +32,10 @@ async function httpPostClient (req: Request<HttpUseridParam, any, ClientEditable
 
 async function httpPatchClient (req: Request<HttpClientidParam, any, ClientEditableFields>, res: Response, next: NextFunction) {
   const { clientid } = req.params;
+
+  const { error } = clientValidators.validate(req.body, { abortEarly: false });
+  if (error) throw new ValidationError('there was an error validating the input', getValidationErrorMessages(error));
+
   try {
     const clientId = await patchClient(clientid, req.body);
     return res.status(200).json({ clientId });

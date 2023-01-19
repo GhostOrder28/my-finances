@@ -1,0 +1,21 @@
+{
+  "name": "my-finances",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch-client": "npm run watch --prefix client",
+    "watch-server": "npm run watch --prefix server",
+    "watch": "npm run watch-client & npm run watch-server",
+    "build": "npm run build --prefix client",
+    "deploy": "npm run build --prefix client & npm run watch-server"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.15"
+  },
+  "dependencies": {
+    "vuex": "^4.1.0"
+  }
+}

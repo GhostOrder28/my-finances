@@ -13,6 +13,7 @@ async function checkLoggedIn (req: Request, _: Response, next: NextFunction) {
     }
     next();
   } catch (err) {
+    console.log('error!!!');
     if (err instanceof AuthorizationError) return next(err);
     throw new Error(`there was an error: ${err}`);
   }
