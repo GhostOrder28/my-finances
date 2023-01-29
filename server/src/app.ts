@@ -53,9 +53,9 @@ app.use(checkLoggedIn);
 
 app.use('/users', usersRouter);
 app.use('/clients', clientsRouter);
-// app.get('/*', function (_, res: Response) { 
-//   res.sendFile(path.join(__dirname, "../public/index.html"));
-// });
+app.get('/*', function (_, res: Response) { 
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
 app.use(errorHandler);
 
 export default app;

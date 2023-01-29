@@ -3,9 +3,9 @@ import store from '@/store/index';
 const ClientListPage = () => import('@/pages/client-list-page.vue');
 const ClientPage = () => import('@/pages/client-page.vue') ;
 const SalePage = () => import('@/pages/sale-page.vue');
-const NewClientPage = () => import('@/pages/new-client-page.vue');
-const NewSalePage = () => import('@/pages/new-sale-page.vue');
-const NewPaymentPage = () => import('@/pages/new-payment.vue');
+const ClientFormPage = () => import('@/pages/client-form-page.vue');
+const SaleFormPage = () => import('@/pages/sale-form-page.vue');
+const PaymentFormPage = () => import('@/pages/payment-form-page.vue');
 const AuthPage = () => import('@/pages/auth-page.vue');
 
 // function protectRoute (Component) {
@@ -35,28 +35,62 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     name: 'client',
-    path: '/client',
-    component: ClientPage 
-  },
-  {
-    name: 'sale',
-    path: '/sale',
-    component: SalePage
+    path: '/client/:clientid',
+    component: ClientPage,
+    // children: [
+      // {
+      //   name: 'sale',
+      //   path: 'sale/:saleid',
+      //   component: SalePage,
+      //   children: [
+      //     {
+      //       name: 'newpayment',
+      //       path: 'newpayment',
+      //       component: NewPaymentPage
+      //     }
+      //   ]
+      // },
+      // {
+      //   name: 'newsale',
+      //   path: 'newsale',
+      //   component: NewSalePage
+      // }
+    // ]
   },
   {
     name: 'newclient',
     path: '/newclient',
-    component: NewClientPage
+    component: ClientFormPage
   },
   {
-    name: 'newsale',
-    path: '/newsale',
-    component: NewSalePage
+    name: 'editclient',
+    path: '/editclient/:clientid',
+    component: ClientFormPage
+  },
+  {
+    name: 'sale',
+    path: '/client/:clientid/sale/:saleid',
+    component: SalePage,
   },
   {
     name: 'newpayment',
-    path: '/newpayment',
-    component: NewPaymentPage
+    path: '/client/:clientid/sale/:saleid/newpayment',
+    component: PaymentFormPage,
+  },
+  {
+    name: 'editpayment',
+    path: '/client/:clientid/sale/:saleid/editpayment/:paymentid',
+    component: PaymentFormPage,
+  },
+  {
+    name: 'newsale',
+    path: '/client/:clientid/newsale',
+    component: SaleFormPage
+  },
+  {
+    name: 'editsale',
+    path: '/client/:clientid/editsale/:saleid',
+    component: SaleFormPage
   }
 ]
 

@@ -1,3 +1,5 @@
+import mongoose, { Types } from 'mongoose';
+
 type SignupData = UserCredentials & {
   username: string;
   hashedPwd?: string;
@@ -9,7 +11,7 @@ type UserCredentials = {
 }
 
 type User = {
-  _id: string;
+  _id: Types.ObjectId;
   username: string;
   email: string;
   password: string;

@@ -1,13 +1,24 @@
 import mongoose from "mongoose";
 import clientsCollection from "../clients/clients.schema";
-import { SaleRequestBody, Item, Payment } from "../../types/sale.types";
+import { 
+  SaleFormData, 
+  SalePostReqBody, 
+  SalePatchReqBody, 
+  Item, 
+  Payment,
+  ClientAndSaleResBody,
+  SaleDataForPaymentForm,
+  isClientAndSaleResBody,
+  isSaleFormResBody,
+} from "../../types/sale.types";
 import { NotFoundError } from "../../errors/db-errors";
+import { strParseIn, strParseOut } from "../../utils/utility-functions";
 
 const { Types: { ObjectId } } = mongoose;
 
 function getTotalSaleValue (items: Item[]) {
   const totalValue = items.reduce((acc, curr) => {
-    return acc + (curr.price * curr.quantity);
+    return acc + (curr.pricePerUnit * curr.quantity);
   }, 0);   
   return totalValue;
 };
@@ -19,11 +30,50 @@ function getPaidAmount (payments: Payment[]) {
   return paidAmount;
 };
 
-async function postSale (clientId: string,  body: SaleRequestBody) {
-  const saleValue = getTotalSaleValue(body.items);
-  body.payments[0]._id = new ObjectId();
+function saleDataAggregation (clientId: string, saleId: string) {
+  return [
+    {
+      $unwind: { path: '$sales' }
+    },
+    { 
+      $match: {
+        _id: new ObjectId(clientId),
+        'sales._id': new ObjectId(saleId)
+      },
+    },
+  ]
+};
 
-  const initialPayment = body.payments?.length ? body.payments[0].amount : 0;
+function getClientDataProjection (clientId: string, saleId: string, projection: {}) {
+  return [
+    ...saleDataAggregation(clientId, saleId),
+    {
+      $addFields: {
+        'sales.clientName': '$clientName',
+        'sales.clientNameDetails': '$clientNameDetails'
+      }
+    },
+    { $replaceRoot: { newRoot: '$sales' } },
+    { $project: projection }
+  ]
+};
+
+async function postSale (clientId: string,  body: SalePostReqBody) {
+  let initialPayment;
+
+  body = {
+    ...body,
+    items: body.items.map((item) => ({ ...item, name: strParseIn(item.name) }))
+  }
+  const saleValue = getTotalSaleValue(body.items);
+
+  if (body.payments.length) {
+    body.payments[0]._id = new ObjectId();
+    initialPayment = body.payments[0].amount;
+  } else {
+    initialPayment = 0;
+  }
+
   const unpaidAmount = saleValue - initialPayment;
 
   const query = { _id: new ObjectId(clientId) };
@@ -58,7 +108,7 @@ async function postSale (clientId: string,  body: SaleRequestBody) {
 
 };
 
-async function patchSale (clientId: string, saleId: string, body: Omit<SaleRequestBody, 'payments'>) {
+async function patchSale (clientId: string, saleId: string, body: Omit<SalePatchReqBody, 'payments'>) {
   const saleValue = getTotalSaleValue(body.items);
   const query = { _id: new ObjectId(clientId) };
 
@@ -103,7 +153,62 @@ async function patchSale (clientId: string, saleId: string, body: Omit<SaleReque
   } catch (err) {
     throw new Error(`there was an error: ${err}`)
   }
+};
 
+async function getOneSale (clientId: string, saleId: string) {
+  try {
+    const [ dbResponse ] = await clientsCollection.aggregate<ClientAndSaleResBody>(saleDataAggregation(clientId, saleId));
+
+    if (!dbResponse) throw new NotFoundError(`El cliente o la venta no existe.`);
+
+    const parsedItems = dbResponse.sales.items.map(item => ({ ...item, name: strParseOut(item.name) }));
+
+    dbResponse.sales = { ...dbResponse.sales, items: parsedItems };
+    dbResponse.clientName = strParseOut(dbResponse.clientName);
+    dbResponse.clientNameDetails = strParseOut(dbResponse.clientNameDetails);
+
+    return dbResponse;
+  } catch (err) {
+    throw new Error(`there was an error: ${err}`)
+  }
+};
+
+async function getSaleFormData (clientId: string, saleId: string) {
+  const [ dbResponse ] = await clientsCollection.aggregate<SaleFormData>(getClientDataProjection(clientId, saleId, {
+    _id: 0,
+    saleDate: 1,
+    items: 1,
+    clientName: 1,
+    clientNameDetails: 1,
+  }));
+
+  if (!dbResponse) throw new NotFoundError(`El cliente o la venta no existe.`);
+
+  const parsedItems = dbResponse.items.map(item => ({ ...item, name: strParseOut(item.name) }));
+
+  dbResponse.items = parsedItems, 
+  dbResponse.clientName = strParseOut(dbResponse.clientName) 
+  dbResponse.clientNameDetails = strParseOut(dbResponse.clientNameDetails) 
+
+  return dbResponse;
+};
+
+async function getSaleDataForPayment (clientId: string, saleId: string) {
+  const [ dbResponse ] = await clientsCollection.aggregate<SaleDataForPaymentForm>(getClientDataProjection(clientId, saleId, {
+    _id: 0,
+    saleDate: 1,
+    clientName: 1,
+    unpaidAmount: 1,
+    clientNameDetails: 1,
+  }));
+
+  if (dbResponse) {
+    dbResponse.clientName = strParseOut(dbResponse.clientName);
+    dbResponse.clientNameDetails = strParseOut(dbResponse.clientNameDetails) 
+    return dbResponse;
+  } else {
+    throw new NotFoundError('El cliente o la venta no existe.')
+  };
 };
 
 async function deleteSale (clientId: string, saleId: string) {
@@ -148,4 +253,7 @@ export {
   postSale,
   patchSale,
   deleteSale,
+  getOneSale,
+  getSaleFormData,
+  getSaleDataForPayment,
 }

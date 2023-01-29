@@ -2,19 +2,19 @@
   <section id='top-panel'>
     <div id="stats-container">
       <div id="client-info">
-        <h1>Alma Delfina</h1>
+        <h1>{{ clientData ? clientData.clientName : ''}}</h1>
         <address>
           <Icon name="phone" />
-          <span>525 2565</span>
+          <span>{{ clientData ? clientData.contactPhone : '' }}</span>
         </address>
       </div>
-      <StatItem icon="total-debt" label="Deuda total" value="S/ 124" />
+      <StatItem icon="total-debt" label="Deuda total" :value="clientData ? clientData.currentDebt : 0" />
     </div>
   </section>
   <section 
     id='page-content'
   >
-    <table ref='tableRef'>
+    <table ref="tableRef">
       <thead>
         <tr>
           <th class="f-rs">Venta</th>
@@ -27,55 +27,81 @@
         ref='tbodyRef'
         :style="{ height: tbodyHeight + 'px' }"
       >
-        <tr
-          v-for="(sale, idx) in clientSales"
-          :key="'sale' + idx"
-        >
-          <td class="f-rs">
-            <time class="ls">{{ sale.date }}</time>
-            <ul>
-              <li
-                v-for="(item, itemIdx) in sale.items"
-                :key="'item' + itemIdx"
-              >
-                {{ item }}
-              </li>
-            </ul>
-          </td>
-          <td class="f-rs">{{ sale.totalAmount }}</td>
-          <td class="f-rs">{{ sale.paid }}</td>
-          <td class="f-rs">{{ sale.owed }}</td>
-        </tr>
+        <div v-if="clientData">
+          <tr
+            v-for="(sale, idx) in clientData.sales"
+            :key="'sale' + idx"
+          >
+            <router-link 
+              :to="`${$route.path}/sale/${sale._id}`"
+            >
+              <td class="f-rs">
+                <time class="ls">{{ sale.saleDate }}</time>
+                <ul>
+                  <li
+                    v-for="(item, itemIdx) in sale.items"
+                    :key="'item' + itemIdx"
+                  >
+                    {{ item.name }}
+                  </li>
+                </ul>
+              </td>
+              <td class="f-rs">{{ sale.saleValue }}</td>
+              <td class="f-rs">{{ sale.paidAmount }}</td>
+              <td class="f-rs">{{ sale.unpaidAmount }}</td>
+            </router-link>
+          </tr>
+        </div>
       </tbody>
     </table>
   </section>
-  <PopupButton label="Nueva venta" />
+  <PopupButton label="Nueva venta" :url="{ name: 'newsale',  params: { clientid: $route.params.clientid } }" />
 </template>
 
-<script>
-import StatItem from '@/components/stat-item'
-import PopupButton from '@/components/popup-button' 
-import Icon from '@/components/icon'
-import { getReferenceHeight } from '@/utils/utility-functions'
-// mocks
-import clientSales from '@/mocks/client-sales.mock'
-export default {
+<script lang='ts'>
+import StatItem from '@/components/stat-item.vue'
+import PopupButton from '@/components/popup-button.vue' 
+import Icon from '@/components/icon.vue'
+import { getReferenceHeight, getReferenceHeight2 } from '@/utils/utility-functions'
+import { defineComponent } from 'vue'
+import { State, Refs, Methods } from '@/types/pages/client-page.types'
+import { Empty } from '@/types/global.types'
+import http from '@/utils/axios-instance'
+
+export default defineComponent<Empty, Empty, State, Empty, Methods>({
+  // for some Reason if I pass Props to the first parameter in defineComponent typescript thinks 'props' is undefined, so for now I will let it as any.
+
   data () {
     return {
-      clientSales,
+      clientData: undefined, // I've tried adding a type predicate to {} | ClientResponse so I can initialize this prop as an empty object instead of undefined but for some reason type  predicates doesn't work on Vue
       tbodyHeight: 0
+    }
+  },
+  methods: {
+    async getClientData () {
+      try {
+        const res = await http.get(`/clients/${this.$route.params.clientid}?single=true`);
+        console.log('res', res.data.clientData);
+
+        this.clientData = res.data.clientData;
+      } catch (err) {
+        console.error(err)
+      }
     }
   },
   components: {
     Icon,
-    StatItem ,
+    StatItem,
     PopupButton
   },
+  async beforeMount () {
+    await this.getClientData();
+  },
   mounted () {
-    const tbodyHeight = getReferenceHeight(this.$refs);
+    const tbodyHeight = getReferenceHeight(this.$refs as Refs);
     this.tbodyHeight = tbodyHeight;
   }
-}
+})
 </script>
 
 <style scoped>
@@ -136,4 +162,3 @@ time {
   color: #6B6B6B;
 }
 </style>
-

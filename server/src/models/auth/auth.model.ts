@@ -24,19 +24,20 @@ async function signup (body: SignupData) {
 };
 
 async function signin (email: string) {
+  console.log('AAAAA');
   try {
     const userData = await userModel.findOne({ email });
     if (userData) {
+      console.log('ZZZZ');
       return {
         _id: userData._id,
         username: userData.username,
         email: userData.email,
         password: userData.password
       };
-    } else {
-      throw new AuthenticationError('Contraseña incorrecta o el usuario no exsite');
-    };
+    } 
   } catch (err) {
+    console.log('HHHH');
     throw new Error(`there was an error: ${err}`)
   }
 };

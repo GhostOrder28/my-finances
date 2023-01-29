@@ -1,12 +1,20 @@
 import { Types } from "mongoose";
 import clientsCollection from "./clients.schema";
 import usersSchema from '../users/users.schema';
-import { ClientEditableFields } from "../../types/client.types";
+import { Client, ClientEditableFields } from "../../types/client.types";
 import { NotFoundError } from "../../errors/db-errors";
 import { patchUserAssets } from '../users/users.model';
 import { strParseIn, strParseOut } from "../../utils/utility-functions";
+import { Sale } from '../../types/sale.types';
 
 const { ObjectId } = Types;
+
+function parseItemNames (sales: Sale[]): Sale[] {
+  return sales.map(sale => {
+    const parsedItems = sale.items.map(item => ({ ...item, name: strParseOut(item.name) }))
+    return { ...sale, items: parsedItems }
+  });   
+};
 
 async function postClient (userId: string, body: ClientEditableFields) {
   body.clientName = strParseIn(body.clientName);
@@ -60,7 +68,6 @@ async function getClients (userId: string) {
   
   try {
     const clientList = await clientsCollection.find(query, projection);
-    // console.log(clientList);
     if (clientList) {
       const parsedClientList = clientList.map((client) => ({
         ...client.toObject(),
@@ -78,15 +85,15 @@ async function getClients (userId: string) {
 
 async function getOneClient (clientId: string) {
   try {
-    const clientData = await clientsCollection.findById(clientId, {
-      clientName: 1,
-      clientNameDetails: 1,
-      currentDebt: 1,
-      contactPhone: 1,
-      sales: 1,
+    const clientData = await clientsCollection.findById<Omit<Client, 'userId'>>(clientId, {
+      _id: 0,
+      userId: 0,
     });
 
     if (clientData) {
+      clientData.clientName = strParseOut(clientData.clientName);
+      clientData.clientNameDetails = strParseOut(clientData.clientNameDetails);
+      clientData.sales = parseItemNames(clientData.sales)
       return clientData;
     } else {
       throw new NotFoundError('El cliente no existe');

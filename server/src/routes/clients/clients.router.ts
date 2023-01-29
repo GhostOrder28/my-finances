@@ -12,6 +12,7 @@ const clientsRouter = express.Router();
 
 clientsRouter.get('/:userid', httpGetClients);
 clientsRouter.get('/:clientid', httpGetOneClient);
+clientsRouter.get('/:clientid', httpGetOneClient);
 clientsRouter.post('/:userid', httpPostClient);
 clientsRouter.patch('/:clientid', httpPatchClient);
 clientsRouter.delete('/:userid/:clientid', httpDeleteOneClient);

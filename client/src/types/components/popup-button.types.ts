@@ -1,7 +1,8 @@
+import { RouteLocationRaw } from 'vue-router'
+
 type Props = {
   label: string;
-  type: 'button' | 'link';
-  url: string;
+  url: RouteLocationRaw;
 }
 
 export {

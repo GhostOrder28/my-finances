@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 import clientsCollection from "../clients/clients.schema";
 import { Payment } from "../../types/sale.types";
+import { PaymentPatchReqBody, PaymentEditionData } from "../../types/payment.types";
 import { ClientDocumentResponse } from "../../types/client.types";
 import { NotFoundError } from '../../errors/db-errors';
+import { strParseOut } from "../../utils/utility-functions";
 
 const { Types: { ObjectId } } = mongoose;
 
@@ -114,7 +116,7 @@ async function postPayment (clientId: string, saleId: string, body: Omit<Payment
   }
 };
 
-async function patchPayment (clientId: string, saleId: string, paymentId: string, body: Payment) {
+async function patchPayment (clientId: string, saleId: string, paymentId: string, body: PaymentPatchReqBody) {
   body._id = new ObjectId(body._id);
   const query = { _id: new ObjectId(clientId) };
   const update = [
@@ -171,6 +173,50 @@ async function patchPayment (clientId: string, saleId: string, paymentId: string
   }
 };
 
+async function getOnePayment (clientId: string, saleId: string, paymentId: string) {
+  const aggregation = [
+    { $unwind: { path: '$sales' } },
+    {
+      $match: {
+        _id: new ObjectId(clientId),
+        'sales._id': new ObjectId(saleId)
+      }
+    },
+    {
+      $addFields: {
+        'sales.clientName': '$clientName',
+        'sales.clientNameDetails': '$clientNameDetails',
+      } 
+    },
+    { $replaceRoot: { newRoot: '$sales' } },
+    { $unwind: { path: '$payments' } },
+    { $match: { 'payments._id': new ObjectId(paymentId) } },
+    { 
+      $addFields: {
+        'payments.clientName': '$clientName',
+        'payments.clientNameDetails': '$clientNameDetails',
+        'payments.unpaidAmount': '$unpaidAmount',
+        'payments.saleDate': '$saleDate',
+      }
+    },
+    { $replaceRoot: { newRoot: '$payments' } },
+  ];
+
+  const [ dbResponse ] = await clientsCollection.aggregate<PaymentEditionData>(aggregation);
+
+  if (dbResponse) {
+    console.log('db response', dbResponse);
+    const parsedDbResponse = {
+      ...dbResponse,
+      clientName: strParseOut(dbResponse.clientName),
+      clientNameDetails: strParseOut(dbResponse.clientNameDetails)
+    };
+    return parsedDbResponse;
+  } else {
+    throw new NotFoundError('No se encontro el pago, puede que el cliente o la venta no existan.')
+  };
+};
+
 async function deletePayment (clientId: string, saleId: string, paymentId: string) {
 
   const query = { _id: new Object(clientId) };
@@ -224,5 +270,6 @@ async function deletePayment (clientId: string, saleId: string, paymentId: strin
 export {
   postPayment,
   patchPayment,
+  getOnePayment,
   deletePayment,
 }

@@ -1,28 +1,42 @@
 import { Request, Response, NextFunction } from "express";
-import { signup, signin } from "../../models/auth/auth.model";
+import { signup } from "../../models/auth/auth.model";
 import { UserCredentials, SignupData } from "../../types/auth.types";
-import { AuthenticationError } from "../../errors/server-errors";
+import { User } from "../../types/auth.types";
+import { signupValidator, signinValidator } from "../../joi/auth.validators";
+import { ValidationError } from "../../errors/server-errors";
+import { getValidationErrorMessages } from "../../utils/utility-functions";
 import bcrypt from 'bcrypt';
 
-async function httpSignup (req: Request<any, any, SignupData>, res: Response) {
-  const saltRounds = 10;
+async function httpSignup (req: Request<any, any, SignupData>, res: Response, next: NextFunction) {
   try {
+    const { error } = signupValidator.validate(req.body, { abortEarly: false });
+    if (error) throw new ValidationError('there is a validation error', getValidationErrorMessages(error.details))
+    const saltRounds = 10;
     req.body.hashedPwd = await bcrypt.hash(req.body.password, saltRounds);
     const userCredentials = await signup(req.body);
     return res.status(200).json({ userCredentials });
   } catch (err) {
+    if (err instanceof ValidationError) return next(err);
     throw new Error(`there was an error trying to register a new user: ${err}`);
   }
 }
 
 async function httpSignin (req: Request<any, any, UserCredentials>, res: Response, next: NextFunction) {
-  const { email } = req.body;
+  console.log(req.body);
   try {
-    const { password, ...userData } = await signin(email);
-    return res.status(200).json({ userData })
+    if (req.user) {
+      console.log('req.user is defined, responding to the client...');
+      const { password, ...userData } = req.user as User;
+      return res.status(200).json({ userData });
+    } else {
+      console.log('req.user is undefined, validating input...');
+      const { error } = signinValidator.validate(req.body, { abortEarly: false });
+      if (error) throw new ValidationError('there was a validation error', getValidationErrorMessages(error.details));
+      next();
+    };
   } catch (err) {
-    if (err instanceof AuthenticationError) return next(err);
-    throw new Error(`there was an error trying to signin a user: ${err}`);
+    if (err instanceof ValidationError) return next(err);
+    throw new Error(`there was an error, ${err}`);
   }
 };
 

@@ -5,7 +5,7 @@ import passport from 'passport';
 const authRouter = express.Router();
 
 authRouter.post('/signup', httpSignup);
-authRouter.post('/signin', passport.authenticate('local'), httpSignin);
+authRouter.post('/signin', httpSignin, passport.authenticate('local'), httpSignin);
 authRouter.get('/signout', httpSignout);
 
 export default authRouter;

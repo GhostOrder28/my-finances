@@ -13,17 +13,16 @@ const itemsSchema = new Schema<Item>({
     type: Number,
     required: true,
   },
-  price: {
+  pricePerUnit: {
     type: Number,
     required: true,
   },
 });
 
 const salesSchema = new Schema<Sale>({
-  date: {
-    type: Date,
+  saleDate: {
+    type: String,
     required: true,
-    default: Date.now,
   },
   items: {
     type: [ itemsSchema ],

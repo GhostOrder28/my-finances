@@ -4,7 +4,7 @@
     <Icon :name="icon" />
     <h2>{{ label }}</h2>
   </div>
-  <span>{{ value }}</span>
+  <span>S/ {{ value }}</span>
 </div>
 </template>
 

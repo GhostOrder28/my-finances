@@ -1,5 +1,5 @@
 import mongoose, { Types } from 'mongoose';
-import { Sale } from "./sale.types" 
+import { Sale, SaleResBody } from "./sale.types" 
 
 type Client = {
   _id: Types.ObjectId;
@@ -12,6 +12,9 @@ type Client = {
   clientSalesValue: number;
 }
 
+type ClientReqBody = Omit<Client, '_id'> & { _id?: string };
+type ClientResBody = Omit<Client, '_id' | 'userId' | 'sales'> & { sales: SaleResBody[] };
+
 type ClientListItem = Omit<Client, 'userId' | 'sales'>;
 
 type ClientEditableFields = Pick<Client, 'clientName' | 'clientNameDetails' | 'contactPhone'>;
@@ -22,6 +25,8 @@ type ClientDocumentResponse = (mongoose.Document<unknown, any, Client> & Client 
 
 export {
   Client,
+  ClientReqBody,
+  ClientResBody,
   ClientEditableFields,
   ClientDocumentResponse,
   ClientListItem,

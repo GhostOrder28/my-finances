@@ -19,17 +19,20 @@
         ref='tbodyRef'
         :style="{ height: tbodyHeight + 'px' }"
       >
-        <tr
+        <router-link 
           v-for="(client, idx) in clientList"
           :key="'client' + idx"
+          :to="{ name: 'client', params: { clientid: client._id.toString() } }"
         >
-          <td class="f-rs">{{ client.clientName }}</td>
-          <td class="f-rs">{{ `S/ ${client.currentDebt}` }}</td>
-        </tr>
+          <tr>
+            <td class="f-rs">{{ client.clientName }}</td>
+            <td class="f-rs">{{ `S/ ${client.currentDebt}` }}</td>
+          </tr>
+        </router-link>
       </tbody>
     </table>
   </section>
-  <PopupButton type="link" label="Añadir cliente" url='newclient' />
+  <PopupButton label="Añadir cliente" :url="{ name: 'newclient' }" />
 </template>
 
 <script lang="ts">
@@ -54,7 +57,7 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
     async getClients () {
       try {
         const res = await http.get<{ clientList: ClientListItem[] }>(`/clients/${this.$store.state._id}`);
-        console.log(res.data.clientList);
+        console.log('server response: ', res.data.clientList);
         this.clientList = res.data.clientList
       } catch (err) {
         console.error(err);

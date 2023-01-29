@@ -73,6 +73,136 @@ And the answer that I dare to give is that that html template actually is always
 
 That file is not an error is actually the container for the whole Vue app, is just that in this case (the axios get request) I wasn't rendering the response in the viewport, which is what happens when I request a route from the browser url bar itself, what I was doing in fact was storing the raw template and logging it (as plain text), and this is why this was a successful response with this 'weird' html template.
 
+## Typing serializeUser and deserializeUser from passportjs.
+
+I'm implementing a basic local authentication flow with passportjs and cookie-session middlewares in my node server.
+
+TLDR:
+
+Inside `verifyCallback` I query the database for the user data and in response I receive an object like this:
+
+```lang-ts
+{
+  _id: '...',
+  email: '...',
+  password: '...',
+  //some other props
+}
+```
+
+I want to send only `_id` to the cookie session but for `req.user` I want to send the entire object. In javascript this is not an issue but adding typescript and complying with the type definitions make this task more complicated because:
+
+```lang-ts
+//serializeUser type:
+serializeUser<TID>(fn: (user: Express.User, done: (err: any, id?: TID) => void) => void): void;
+
+//deserializeUser type:
+deserializeUser<TID>(fn: (id: TID, done: (err: any, user?: Express.User | false | null) => void) => void): void;
+
+//req.user type:
+Express.user
+```
+
+`serializeUser`, `deserializeUser` and `req.user` share the same type when it comes to the user data and it cannot be customized through generics.
+
+----
+
+My auth flow is as follows:
+
+1. user sends the signin data to the server `/signin` endpoint, which has this shape:
+```lang-ts
+{
+  email: string;
+  password: string;
+}
+```
+2. this is the express route that will handle that endpoint:
+```lang-ts
+authRouter.post('/signin', passport.authenticate('local'), httpSignin);
+```
+This means:
+
+3. the `verifyCallback` will be triggered by `passport.authenticate('local')`.
+4. inside `verifyCallback` I make a query to the database to check for the existence of the user and then compare the passwords, finally I call the done callback passing only the `_id` property I've got from the database response.
+```lang-ts
+async function verifyCallback (username: string, password: string, done: DoneCallback, next: NextFunction) {
+  const res = await findOne({ username: req.body.username });
+  // check if user exists
+  // check password hashes
+  const userData = { _id: res._id }
+  return done(null, userData);
+}
+```
+5. `req.user` will then be populated with `userData`.
+6. `userData` will be also passed to the `serializeUser` function.
+7. the `httpSignin` controller function will be called and it will respond to the client with also the `userData` from `req.user`.
+```lang-ts
+function httpSignin (req: Request<any, any, UserCredentials>, res: Response, next: NextFunction) {
+  res.status(200).json({ userData: req.user })
+}
+```
+
+Now because I'm using typescript I understand (according to this question) that I have to extend the `Express.User` interface with the data I want to serialize into the session so passport can recognize it in serializeUser and deserializeUser functions. So I put this in `global.d.ts`:
+
+```lang-js
+declare namespace Express {
+  export interface User {
+    _id: string;
+  }
+}
+```
+
+Until here all is fine, but then here comes the issue. As I mentioned before at the end of this auth flow I will call my `httpSignin` controller and respond to the client with the user data which right now is an object that only contains the `_id` property, but what I really need is to respond to the client not only with the `_id` property but with the entire user data I received from the database (except of course the password) because I wan't to populate my Vuex store with that data in the client.
+
+So since I'm making a query to the database in the `verifyCallback` function and thus getting the user data which then will be passsed to `req.user` I would like to take advantage of this data and send it in the response to the client, this way I don't have to make a second query to the database in `httpSignin` to get the very same data that I already got in the `verifyCallback`.
+
+However to do this I will have to pass the entire user data object which I received from the database to the `done(null, userData)` callback inside `verifyCallback`, this means that I will have to extend `Express.User` not just with the `_id` property (which is the only one I want to assign to the cookie) but with the entire user data object and this in turn will force me (at least if I want to respect the type definitions) to serialize the entire user object too which needless to say is a bad idea because the cookie doesn't need all that information.
+
+----
+
+Right now I'm just avoiding to extend `Express.User` and casting or assigning the types manually:
+
+```lang-ts
+passport.serializeUser((userData, done) => {
+  done(null, (userData as User)._id.toString());
+});
+passport.deserializeUser<string>((userId, done) => {
+  done(null, userId); 
+});
+
+function httpSignin (req: Request<any, any, UserCredentials>, res: Response, next: NextFunction) {
+  const { password, ...userData } = req.user as User;
+  res.status(200).json({ userData: req.user })
+}
+```
+
+But I would like to avoid type casting if possible.
+
+## XML Parsing Error: syntax error when sending a request with a body with empty properties to the server.
+
+When I send a request like this:
+
+```lang-js
+{
+  "username": "",
+  "password": ""
+}
+```
+
+I receive get this error in firefox:
+
+```
+XML Parsing Error: syntax error
+Location: https://localhost:3001/auth/signin
+Line Number 1, Column 1:
+```
+
+I stop getting this error if I remove the `passport.authenticate('local')` middleware in the router.
+
+### Solution.
+
+Passportjs cannot receive empty fields (username and password) so the solution is to validate the user input before calling the `passport.authenticate('local')` middleware.
+
 # Frontend.
 
 ## Vuex store is not update at the moment route.beforeEach checks it.
@@ -93,3 +223,29 @@ The issue was that at the moment `beforeEach` was triggered the vuex store was n
 ### Solution.
 
 Await for the dispatched actions in `handleSubmit`, and also because of that make it an async function too.
+
+## Axios interceptors only work in the root route.
+I have a basic login handled with passportjs and cookie-session for cookies, after the user is logged in I set a cookie with the user id which is then serialized and sent to the frontend along with the response.
+
+After that for every request the user makes to my api I first check if that user (identified by that cookie) is logged in using the `req.isAuthenticated` method from passportjs. If there is no cookie or it has been tampered then I throw an error that is handled by express which in turn sends a 401 response to the client.
+
+On the client side I have axios interceptors ready to handle that 401 response:
+
+```lang-js
+http.interceptors.response.use(
+  function (response) {
+    console.log('successful request!');
+    return response; 
+  },
+  function (error) {
+    console.log('there was an error trying to request that enpoint!');
+    console.log(error);
+    if (error.response.data.authorizationError) return store.dispatch('resetState');
+    return Promise.reject(error);
+  }
+)
+```
+
+However for some reason this interceptor only works if the client made the request to the server from the root `https://localhost:3001/` route, if the client make a request from any other route e.g. `https://localhost:3001/clients` the interceptor is not called at all.
+
+I think the reason is that once the `checkLoggedIn` middleware fails to check the login it throws an Error, consecuently express omit all the next middlewares and one of those middlewares is the wildcard one which is the one that handles all the routes from the app, and this is why the client only gets a message as a response, that is the json formatted message that the servr is sending, it is not sending `index.js`. This however doesn't explain why express is sending `index.js` correctly when the request in made from the root route.

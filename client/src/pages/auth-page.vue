@@ -2,17 +2,22 @@
   <div id="page-container">
     <div>
       <h1>Registro</h1>
+      <h3>{{ $store.state.errors.authorizationError }}</h3>
+      <h3>{{ $store.state.errors.authenticationError }}</h3>
       <form @submit.prevent="handleSubmit">
         <div v-if="$route.path === '/signup'">
           <label for="username">Nombre</label>
           <input v-model="username" name="username" type="text" placeholder="Tu nombre">
+          <label for="username">{{ $store.state.errors.username }}</label>
         </div>
 
         <label for="email">Email</label>
         <input v-model="email" name="email" type="text" placeholder="Correo electrónico">
+        <label for="email">{{ $store.state.errors.email }}</label>
 
         <label for="password">Contraseña</label>
         <input v-model="password" name="password" type="password" placeholder="Password">
+        <label for="password">{{ $store.state.errors.password }}</label>
 
         <button type="submit">{{ $route.path === '/signup' ? 'Confirmar Registro' : 'Ingresar' }}</button>
         <button type="button">Cancelar</button>
@@ -32,8 +37,8 @@ export default {
       password: '',
     }
   },
-  methods: {
-    async handleSubmit (e) {
+  methods: {    
+    async handleSubmit () {
       try {
         if (this.$route.path === '/signup') {
           await this.$store.dispatch('signupUser', {
@@ -41,17 +46,22 @@ export default {
             email: this.email,
             password: this.password,
           })
-        } else {
+        }
+
+        if (this.$route.path === '/signin') {
+          console.log('request: ', {
+            email: this.email,
+            password: this.password,
+          });
           await this.$store.dispatch('signinUser', {
             email: this.email,
             password: this.password,
           })
         }
-        console.log('logged in...');
 
         this.$router.push({ path: '/clients' })
       } catch (err) {
-        console.log(err);
+        console.error('Necesitas llenar todos los campos requeridos.');
       }
     },
     ...mapActions([ 'signinUser', 'signupUser', 'signoutUser' ]),

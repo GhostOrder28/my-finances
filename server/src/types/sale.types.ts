@@ -1,28 +1,65 @@
 import { Types } from "mongoose";
-import { Payment } from "./payment.types";
+import { Payment, PaymentPostReqBody, PaymentEditionData, PaymentResBody } from "./payment.types";
+import { Client, ClientResBody } from "./client.types";
 
 type Item = {
-  _id: Types.ObjectId;
   name: string;
   quantity: number;
-  price: number;
+  pricePerUnit: number;
 }
+
+type ItemResBody = Omit<Item, '_id'> & { _id: string };
 
 type Sale = {
   _id: Types.ObjectId;
-  date: Date;
+  saleDate: string;
   items: Item[];
   payments: Payment[];
   saleValue: number;
   paidAmount: number;
   unpaidAmount: number;
+};
+
+type SalePostReqBody = Pick<Sale, 'saleDate' | 'items'> & {
+  payments: PaymentPostReqBody[];
 }
 
-type SaleRequestBody = Pick<Sale, 'date' | 'items' | 'payments'>
+type SalePatchReqBody = Pick<Sale, 'saleDate' | 'items'>;
+
+type SaleResBody = Omit<Sale, '_id' | 'items' | 'payments'> & { 
+  _id: string;
+  items: ItemResBody[],
+  payments: PaymentResBody[],
+}
+
+type SaleFormData = SalePatchReqBody & Pick<Client, 'clientName' | 'clientNameDetails'>; // this should be called SaleFormPageData or smth like that
+type ClientAndSaleResBody = Omit<ClientResBody, 'sales'> & { sales: SaleResBody }; // this should be plainly called ClientAndSaleData
+type SaleDataForPaymentForm = Pick<Client, 'clientName' | 'clientNameDetails'> & Pick<Sale, 'unpaidAmount' | 'saleDate'>;
+
+function isSalePostReqBody (saleReqBody: SalePostReqBody | SalePatchReqBody | SalePatchReqBody): saleReqBody is SalePostReqBody {
+  return (saleReqBody as SalePostReqBody).payments !== undefined;   
+};
+
+function isSaleFormResBody (saleResBody: SaleFormData | ClientAndSaleResBody): saleResBody is SaleFormData {
+  return (saleResBody as SaleFormData).items !== undefined;
+};
+
+function isClientAndSaleResBody (saleResBody: SaleFormData | ClientAndSaleResBody): saleResBody is ClientAndSaleResBody {
+  return (saleResBody as ClientAndSaleResBody).contactPhone !== undefined;
+};
 
 export {
   Item,
+  ItemResBody,
   Payment,
   Sale,
-  SaleRequestBody,
+  SaleResBody,
+  ClientAndSaleResBody,
+  SalePostReqBody,
+  SalePatchReqBody,
+  SaleFormData,
+  isSalePostReqBody,
+  isSaleFormResBody,
+  isClientAndSaleResBody,
+  SaleDataForPaymentForm,
 }
