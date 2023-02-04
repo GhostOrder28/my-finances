@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import clientsCollection from "../clients/clients.schema";
-import { Payment } from "../../types/sale.types";
+import { PaymentPostReqBody } from "../../types/payment.types";
 import { PaymentPatchReqBody, PaymentEditionData } from "../../types/payment.types";
-import { ClientDocumentResponse } from "../../types/client.types";
+import { ClientDocumentResponse, Client } from "../../types/client.types";
 import { NotFoundError } from '../../errors/db-errors';
-import { strParseOut } from "../../utils/utility-functions";
+import { strParseIn, strParseOut } from "../../utils/utility-functions";
+import { format } from "date-fns";
 
 const { Types: { ObjectId } } = mongoose;
 
@@ -70,7 +71,12 @@ function getPaymentIdFromClientDoc (saleId: string, dbResponse: ClientDocumentRe
   return newPaymentId;
 };
 
-async function postPayment (clientId: string, saleId: string, body: Omit<Payment, '_id'>) {
+async function postPayment (clientId: string, saleId: string, body: PaymentPostReqBody) {
+  const parsedBody = {
+    ...body,
+    paymentDate: format(new Date(body.paymentDate), 'yyyy-MM-dd')
+  }
+
   const query = { _id: new ObjectId(clientId) };
   const update = [
     {
@@ -86,7 +92,7 @@ async function postPayment (clientId: string, saleId: string, body: Omit<Payment
                     '$$this', 
                     { 
                       payments: {
-                        $concatArrays: [ '$$this.payments', [ { _id: new ObjectId(), ...body } ] ]
+                        $concatArrays: [ '$$this.payments', [ { _id: new ObjectId(), ...parsedBody } ] ]
                       }
                     } 
                   ]
@@ -117,7 +123,11 @@ async function postPayment (clientId: string, saleId: string, body: Omit<Payment
 };
 
 async function patchPayment (clientId: string, saleId: string, paymentId: string, body: PaymentPatchReqBody) {
-  body._id = new ObjectId(body._id);
+  const parsedBody = {
+    ...body,
+    _id: new ObjectId(body._id),
+    paymentDate: format(new Date(body.paymentDate), 'yyyy-MM,dd')
+  };
   const query = { _id: new ObjectId(clientId) };
   const update = [
     { 
@@ -138,7 +148,7 @@ async function patchPayment (clientId: string, saleId: string, paymentId: string
                           in : {
                             $cond: [
                               { $eq: [ '$$this._id', new ObjectId(paymentId) ] },
-                              body,
+                              parsedBody,
                               '$$this'
                             ]
                           }
@@ -218,6 +228,7 @@ async function getOnePayment (clientId: string, saleId: string, paymentId: strin
 };
 
 async function deletePayment (clientId: string, saleId: string, paymentId: string) {
+  console.log('B');
 
   const query = { _id: new Object(clientId) };
   const update = [
@@ -251,14 +262,19 @@ async function deletePayment (clientId: string, saleId: string, paymentId: strin
     },
     calculatePaidAmountStage(saleId),
     calculateUnpaidAmountStage(saleId),
-    calculateCurrentDebtStage()
+    calculateCurrentDebtStage(),
   ];
-  const options = { new: true };
+  const options = { new: true, fields: { sales: 1 } };
   
   try {
-    const dbResponse = await clientsCollection.findOneAndUpdate(query, update, options);
+    const dbResponse = await clientsCollection.findOneAndUpdate<ClientDocumentResponse>(query, update, options);
+    console.log('dbResponse', dbResponse);
     if (dbResponse) {
-      return paymentId;
+      const affectedSale = dbResponse.sales.find(sale => sale._id.toString() === saleId);
+      return {
+        paidAmount: affectedSale?.paidAmount,
+        unpaidAmount: affectedSale?.unpaidAmount
+      };
     } else {
       throw new NotFoundError(`document not found >> dbResponse value: ${dbResponse}`);
     };

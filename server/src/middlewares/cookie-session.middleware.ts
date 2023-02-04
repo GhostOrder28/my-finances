@@ -1,6 +1,6 @@
 export const cookieSessionOptions: CookieSessionInterfaces.CookieSessionOptions = {
   name: 'session',
-  // sameSite: 'none',
+  sameSite: 'none',
   // secure: true,
   // secureProxy: true,
   maxAge: 24 * 60 * 60 * 1000,

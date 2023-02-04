@@ -11,10 +11,10 @@ import cors from 'cors';
 
 // const app = express();
 // app.use(cors());
-// app.get('/test', (req, res) => {
-//   console.log('success!');
-//   return res.status(200).json('success!');
-// })
+app.get('/test', (req, res) => {
+  console.log('success!');
+  return res.status(200).json('success!');
+})
 
 // const server = http.createServer(app);
 

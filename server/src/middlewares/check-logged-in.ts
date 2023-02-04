@@ -3,6 +3,7 @@ import { AuthorizationError } from "../errors/server-errors";
 
 async function checkLoggedIn (req: Request, _: Response, next: NextFunction) {
   console.log('checking authorization...');
+  console.log('is authenticated?', req.isAuthenticated());
   try {
     const isLoggedIn = req.isAuthenticated() && req.user;
     if (!isLoggedIn) {

@@ -112,6 +112,7 @@ async function deleteOneClient (userId: string, clientId: string) {
     };
 
     if (deletedClient.currentDebt > 0) {
+      console.log(userId);
       const query = { _id: new ObjectId(userId) };
 
       const update = [{
@@ -124,7 +125,7 @@ async function deleteOneClient (userId: string, clientId: string) {
       await usersSchema.findOneAndUpdate(query, update);
     };
 
-    await patchUserAssets(userId);
+    // await patchUserAssets(userId);
 
     return clientId;
 

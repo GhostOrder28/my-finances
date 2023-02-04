@@ -18,6 +18,9 @@ body {
 * When user deletes an item in `new-sale-page.vue` the next item index will be subtracted by 1 and therefore if there was an error in the deleted element that error now will be in place of the next element [].
 * Right now when the client or the sale doesn't exist node only throws an error but I need to integrate this error to a popup message in the frontend to prevent server crash.
 * Signup flow is not working correctly. After signup the user should be signed in but what happens is the user is lead to the signin page, the signin fields are filled with the signup data the user just entered before, and also those fields have validation errors, so this is the reason why Vue is taking the user to the /signin page, because the signin failed, but why? These errors doesn't go away even if I rewrite the signin data, the only way to signin is to clean the cache + cookie for that page.
+* implement searching.
+* When I resize the viewport horizontally and then refresh the page (F5) sometimes a verticall scroll appears along with the vertical scroll from the `tbody`, in these cases the `table offset top` is 78 pixels lesser than what it usually is (222 vs 144) and 78 happen to be the navigation bar height, so it seems that sometimes the `navigation.vue` component takes a little bit more to load than the `client-page.vue` component and I assume the same is going to happen fo the other pages.
+* dates that are not part of inputs are being displayed in `yyyy/MM/dd` it should be `dd/MM/yyyy`.
 
 ## Api integration.
 
@@ -35,6 +38,8 @@ body {
 * postPayment model function: When the `saleId` doesn't match in query this model function returns `undefined`, and although the controller receives this `undefined` value the json response is an empty object and not an object with `paymentId` property set to undefined which is the expected result in this case.
 * I need to implement a get `/clients/:clientid?filter=form` endpoint to be used in `client-form-page.vue`.
 * when querying for a single sale data, the response is the client data plus the sale data inside a `sales` field, that field should be renamed to just `sale` the same when querying to a single payment data.
+* implement order for responses.
+* `clientName` and `clientNameDetails` in the patch sale endpoint are not needed anymore.
 
 ## Endpoints.
 

@@ -1,6 +1,8 @@
 import { ClientListItem } from '#backend/client.types';
 
 type State = {
+  receivables: number;
+  debtors: number;
   clientList: ClientListItem[];
   tbodyHeight: number;
 }

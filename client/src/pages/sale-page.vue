@@ -1,73 +1,157 @@
 <template>
-  <section id='top-panel'>
-    <div id="sale-info">
-      <h1>Venta realizada a {{ clientData ? clientData.clientName : '' }}</h1>
-      <time>{{ clientData ? clientData.sales.saleDate : '' }}</time>
+  <section class="container d-flex flex-column gap-3 bg-green px-3 py-4">
+    <div class="d-flex justify-content-between">
+      <div>
+        <BackLink
+          :entity="clientData ? clientData.clientName : ''"
+          :url="{ name: 'client', params: { clientid: $route.params.clientid } }"
+        />
+        <h1 class="fs-5 fw-bold m-0">Venta realizada a {{ clientData ? clientData.clientName : '' }}</h1>
+      </div>
+      <time class="fw-bold">{{ clientData ? clientData.sales.saleDate : '' }}</time>
     </div>
-    <div id="stats-container">
+    <div class="d-flex gap-3">
+      <EditButton
+        :url="{ 
+          name: 'editsale', 
+          params: { clientid: $route.params.clientid, saleid: $route.params.saleid },
+          query: { clientName: clientData?.clientName, clientNameDetails: clientData?.clientNameDetails }
+        }"
+        :label="true"
+      />
+      <DeleteButton 
+        deleteEvent="deleteSaleIntent" 
+        @deleteSaleIntent="declareSaleDeletionIntent"
+        :label="true"
+      />
+    </div>
+    <div class="d-flex">
       <StatItem icon="total-value" label="Valor total" :value="clientData ? clientData.sales.saleValue : NaN" />
       <StatItem icon="amount-paid" label="Monto pagado" :value="clientData ? clientData.sales.paidAmount : NaN" />
       <StatItem icon="debt" label="Deuda" :value="clientData ? clientData.sales.unpaidAmount : NaN" />
     </div>
   </section>
-  <section id="tabs-container">
-    <button name="products" class="tab f-rs" @click="changeView">PRODUCTOS</button>
-    <button name="payments" class="tab f-rs" @click="changeView">PAGOS</button>
-  </section>
-  <section id='page-content'>
-    <table ref='tableRef'>
-      <thead v-if="currentView === 'products'">
-        <tr>
-          <th class="f-rs">Producto</th>
-          <th class="f-rs">Cantidad</th>
-          <th class="f-rs">Precio/unidad</th>
-        </tr>
-      </thead>
-
-      <thead v-if="currentView === 'payments'">
-        <tr>
-          <th class="f-rs">Fecha de pago</th>
-          <th class="f-rs">Cantidad</th>
-        </tr>
-      </thead>
-      <tbody 
-        ref='tbodyRef'
-        :style="{ height: tbodyHeight + 'px' }"
+  <section class="container p-0">
+    <div class="w-100 d-flex">
+      <button 
+        name="products" 
+        :class="`flex-grow-1 w-50 border-0 fs-4 fw-bold ${ currentView === 'products' ? 'bg-dark-blue' : 'bg-blue' } text-light-purple py-2`"
+        @click="changeView"
       >
-        <div v-if="currentView === 'products' && clientData">
+        PRODUCTOS
+      </button>
+      <button 
+        name="payments" 
+        :class="`flex-grow-1 w-50 border-0 fs-4 fw-bold ${ currentView === 'payments' ? 'bg-dark-blue' : 'bg-blue' } text-light-purple py-2`"
+        @click="changeView"
+      >
+        PAGOS
+      </button>
+    </div>
+    <div class="p-4">
+      <table class="table table-fixed w-100 m-0 overflow-hidden" ref='tableRef'>
+        <thead 
+          v-if="currentView === 'products'"
+          class="d-table w-100 fs-6"
+        >
+          <tr>
+            <th class="text-start" :style="{ width: '40%'}">Producto</th>
+            <th class="text-center" :style="{ width: '20%'}">Cantidad</th>
+            <th class="text-end" :style="{ width: '20%'}">Precio</th>
+            <th class="text-end" :style="{ width: '20%'}">Total</th>
+          </tr>
+        </thead>
+
+        <thead 
+          v-if="currentView === 'payments'"
+          class="d-table w-100 fs-6"
+        >
+          <tr>
+            <th class="text-start">Fecha de pago</th>
+            <th class="text-end">Cantidad</th>
+          </tr>
+        </thead>
+
+        <tbody 
+          :style="{ height: tbodyHeight + 'px' }"
+          v-if="currentView === 'products' && clientData"
+          class="d-block w-100 table-group-divider pb-5 overflow-scroll"
+        >
           <tr
             v-for="(item, idx) in clientData.sales.items"
             :key="'item' + idx"
+            class="d-table w-100 align-middle"
           >
-            <td class="f-rs">{{ item.name }}</td>
-            <td class="f-rs">{{ item.quantity }}</td>
-            <td class="f-rs">S/ {{ item.pricePerUnit }}</td>
+            <td class="text-start" height="50px" :style="{ width: '40%' }">{{ item.name }}</td>
+            <td class="text-center" height="50px" :style="{ width: '20%' }">{{ item.quantity }}</td>
+            <td class="text-end" height="50px" :style="{ width: '20%' }">S/ {{ item.pricePerUnit }}</td>
+            <td class="text-end" height="50px" :style="{ width: '20%' }">S/ {{ item.pricePerUnit * item.quantity }}</td>
           </tr>
-        </div>
+        </tbody>
 
-        <div v-if="currentView === 'payments' && clientData">
+        <tbody 
+          :style="{ height: tbodyHeight + 'px' }"
+          v-if="currentView === 'payments' && clientData"
+          class="d-block w-100 table-group-divider pb-5 overflow-y-scroll"
+        >
           <tr
             v-for="(payment, idx) in clientData.sales.payments"
             :key="'item' + idx"
+            :class="`position-relative d-table w-100 align-middle ${toggleSelectedRow(idx)}`"
+            @pointerdown="startLongPress(idx)"
           >
-            <td class="f-rs">{{ payment.paymentDate }}</td>
-            <td class="f-rs">S/ {{ payment.amount }}</td>
+            <td class="text-start" height="50px">{{ payment.paymentDate }}</td>
+            <td :class="`text-end ${getPaymentStyle(idx)}`" height="50px">S/ {{ payment.amount }}</td>
+            <td 
+              :class="`position-absolute end-0 d-flex justify-content-end gap-2 ${toggleActionPanel(idx)}`"
+              height="50px"
+            >
+              <EditButton
+                :url="{ 
+                  name: 'editpayment', 
+                  params: { clientid: $route.params.clientid, saleid: $route.params.saleid, paymentid: payment._id },
+                  query: { clientName: clientData?.clientName, clientNameDetails: clientData?.clientNameDetails }
+                }"
+              />
+              <DeleteButton 
+                deleteEvent="deletePaymentIntent"
+                @deletePaymentIntent="declarePaymentDeletionIntent(payment._id)"
+                :label="false" 
+              />
+            </td>
           </tr>
-        </div>
-
-        <div v-if="currentView === 'payments'">
-          <tr
-            v-for="(payment, idx) in payments"
-            :key="'item' + idx"
-          >
-            <td class="f-rs">{{ payment.date }}</td>
-            <td class="f-rs">S/ {{ payment.amountPaid }}</td>
-          </tr>
-        </div>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </section>
-  <PopupButton label="Añadir pago" :url="`${$route.path}newpayment`"/>
+  <Modal
+    body="¿Deseas eliminar esta venta?"
+    confirmLabel="Sí, bórrala"
+    rejectLabel="No"
+    confirmEvent="deleteSale"
+    rejectEvent="reject"
+    v-if="displaySaleDeletionConfirmation"
+    @deleteSale="deleteSale"
+    @reject="displaySaleDeletionConfirmation = false"
+  />
+  <Modal
+    body="¿Deseas eliminar este pago?"
+    confirmLabel="Sí, bórralo"
+    rejectLabel="No"
+    confirmEvent="deletePayment"
+    rejectEvent="reject"
+    v-if="displayPaymentDeletionConfirmation"
+    @deletePayment="deletePayment(paymentToDelete)"
+    @reject="displayPaymentDeletionConfirmation = false"
+  />
+  <PopupButton 
+    label="Añadir pago" 
+    :url="{
+      name: 'newpayment', 
+      params: { clientid: $route.params.clientid, saleid: $route.params.saleid },
+      query: { clientName: clientData?.clientName, clientNameDetails: clientData?.clientNameDetails }
+    }"
+  />
 </template>
 
 <script lang="ts">
@@ -75,23 +159,38 @@ import PopupButton from '@/components/popup-button.vue'
 import StatItem from '@/components/stat-item.vue'
 import { getReferenceHeight } from '@/utils/utility-functions'
 import { defineComponent } from 'vue'
-import { State, Methods } from '@/types/pages/sale-page.types'
+import { State, Methods, Refs } from '@/types/pages/sale-page.types'
 import { Empty } from '@/types/global.types'
-import { Client } from '#backend/client.types'
 import { isAxiosError } from 'axios'
 import http from '@/utils/axios-instance'
+import { format } from 'date-fns'
+import EditButton from '@/components/edit-button.vue'
+import DeleteButton from '@/components/delete-button.vue'
+import BackLink from '@/components/back-link.vue'
+import { ClientAndSaleResBody } from '#backend/sale.types'
+import Modal from '@/components/modal.vue'
+import { SaleAfterPayment } from '#backend/sale.types'
 
-export default defineComponent<any, Empty, State, Empty, Methods>({
+export default defineComponent<Empty, Empty, State, Empty, Methods>({
   data () {
     return {
+      displayPaymentDeletionConfirmation: false,
+      displaySaleDeletionConfirmation: false,
+      paymentToDelete: undefined,
+      pressTimeoutId: undefined,
       clientData: undefined,
       currentView: 'products',
-      tbodyHeight: 0
+      tbodyHeight: 0,
+      actionPanel: undefined,
     }
   },
   components: {
     StatItem,
-    PopupButton
+    PopupButton,
+    EditButton,
+    DeleteButton,
+    BackLink,
+    Modal,
   },
   methods: {
     changeView (e: MouseEvent) {
@@ -100,15 +199,69 @@ export default defineComponent<any, Empty, State, Empty, Methods>({
     async getSaleData () {
       try {
         const { clientid, saleid } = this.$route.params;
-        const res = await http.get<{ saleData: Client }>(`/clients/${clientid}/sales/${saleid}`)
-        console.log('sale data: ', res.data.saleData)
+        const res = await http.get<{ saleData: ClientAndSaleResBody }>(`/clients/${clientid}/sales/${saleid}`)
+        const parsedRes = res.data.saleData
+        parsedRes.sales.saleDate = format(new Date(parsedRes.sales.saleDate), 'dd-MM-yyyy')
+        parsedRes.sales.payments = parsedRes.sales.payments.map(payment => ({
+          ...payment, 
+          paymentDate: format(new Date(payment.paymentDate), 'dd-MM-yyyy') 
+        }))
 
-        this.clientData = res.data.saleData
+        this.clientData = parsedRes
       } catch (err) {
         if (isAxiosError(err)) {
           console.error(err.response)
         }
       }
+      // this.clientData = responseMock.saleData
+    },
+    onLongPressStop (e, idx) {
+      console.log(`row ${idx} was pressed`);
+      this.actionPanel = idx
+    },
+    getPaymentStyle (idx) {
+      return idx === this.actionPanel ? 'payment-td' : '';
+    },
+    toggleActionPanel (idx) {
+      return idx === this.actionPanel ? 'action-panel-active' : 'action-panel';
+    },
+    toggleSelectedRow (idx) {
+      return idx === this.actionPanel ? 'row-selected' : '';
+    },
+    startLongPress (rowIdx) {
+      this.pressTimeoutId = setTimeout(() => { this.actionPanel = rowIdx }, 500)
+    },
+    declarePaymentDeletionIntent (paymentId) {
+      this.paymentToDelete = paymentId
+      this.displayPaymentDeletionConfirmation = true
+    },
+    declareSaleDeletionIntent () {
+      this.displaySaleDeletionConfirmation = true
+    },
+    async deletePayment (paymentId) {
+      if (!paymentId) return;
+
+      const { clientid, saleid } = this.$route.params;
+      const res = await http.patch<{ affectedSaleFields: SaleAfterPayment }>(`/clients/${clientid}/sales/${saleid}/payments/${paymentId}?delete=true`)
+
+      if (this.clientData) { // for some reason the type predicate is not working as expected here
+        this.clientData.sales.payments = this.clientData.sales.payments.filter((payment) => {
+          return payment._id !== paymentId;
+        })
+        this.clientData.sales.unpaidAmount = res.data.affectedSaleFields.unpaidAmount
+        this.clientData.sales.paidAmount = res.data.affectedSaleFields.paidAmount
+      }
+      this.displayPaymentDeletionConfirmation = false
+      this.paymentToDelete = undefined
+      this.actionPanel = undefined
+    },
+    async deleteSale() {
+      console.log('deleting this sale');
+      const { clientid, saleid } = this.$route.params;
+      await http.patch(`/clients/${clientid}/sales/${saleid}?delete=true`)
+      this.$router.back();
+      // throw new Error('you need to specify the entity to delete');
+      // this.displaySaleDeletionConfirmation = false
     }
   },
   watch: {
@@ -120,66 +273,32 @@ export default defineComponent<any, Empty, State, Empty, Methods>({
     await this.getSaleData();
   },
   mounted () {
-    const tbodyHeight = getReferenceHeight(this.$refs);
+    console.log(this.$route);
+    const tbodyHeight = getReferenceHeight(this.$refs as Refs);
     this.tbodyHeight = tbodyHeight;
   }
 })
 </script>
 
-<style scoped>
-#stats-container {
-  justify-content: space-between;
+<style>
+.back-link {
+  font-size: .9rem;
 }
-#tabs-container {
-  display: flex;
+.payment-td {
+  transform: translateX(-110px);
+  transition: ease .3s;
 }
-.tab {
-  flex: 1;
-  padding: 1.3rem;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-  letter-spacing: .15em;
-  background-color: #3768E5;
-  color: #CBD8FB;
+.action-panel {
+  visibility: hidden;
+  transform: translateX(110px);
+  transition: ease .3s;
 }
-#sale-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.action-panel-active {
+  visibility: visible;
+  transition: ease .3s;
+  transform: translateX(0px);
 }
-h1, time {
-  font-size: 1.7rem;
-  margin: 0; padding: 0;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-tr {
-  height: 5rem;
-  width: 100%;
-  display: table;
-  vertical-align: middle;
-}
-thead tr {
-  border-bottom: 2px solid #27373D;
-}
-tbody {
-  overflow: scroll;
-  padding-bottom: 3.5rem;
-  display: block;
-}
-tbody tr + tr {
-  border-top: 1px solid #EDEDED;
-}
-td:nth-child(1), th:nth-child(1) {
-  width: 60%;
-  text-align: left;
-}
-td:nth-child(2), th:nth-child(2) {
-  width: 40%;
-  text-align: right;
+.row-selected { 
+  background-color: #CBD8FB;
 }
 </style>
-

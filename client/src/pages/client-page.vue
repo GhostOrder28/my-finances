@@ -1,43 +1,61 @@
 <template>
-  <section id='top-panel'>
-    <div id="stats-container">
-      <div id="client-info">
-        <h1>{{ clientData ? clientData.clientName : ''}}</h1>
-        <address>
+  <section class="container d-flex flex-column bg-green p-4 gap-3">
+    <BackLink 
+      entity="Clientes"
+      :url="{ name: 'clients' }"
+    /> 
+    <div class="d-flex justify-content-between">
+      <div class="d-flex flex-column gap-2 d-flex flex-column gap-1 flex-grow-1">
+        <h1 class="fs-2 fw-bolder text-start m-0">{{ clientData ? clientData.clientName : ''}}</h1>
+        <address class="d-flex align-items-center gap-1 fs-6 m-0">
           <Icon name="phone" />
           <span>{{ clientData ? clientData.contactPhone : '' }}</span>
         </address>
       </div>
       <StatItem icon="total-debt" label="Deuda total" :value="clientData ? clientData.currentDebt : 0" />
     </div>
+    <div class="d-flex gap-3">
+      <EditButton
+        :url="{ 
+          name: 'editclient', 
+          params: { clientid: $route.params.clientid },
+        }"
+        :label="true"
+      />
+      <DeleteButton 
+        deleteEvent="deleteClientIntent" 
+        @deleteClientIntent="declareClientDeletionIntent"
+        :label="true"
+      />
+    </div>
   </section>
-  <section 
-    id='page-content'
-  >
-    <table ref="tableRef">
+  <section class="container p-4">
+    <table ref="tableRef" class="table w-100 m-0">
       <thead>
-        <tr>
-          <th class="f-rs">Venta</th>
-          <th class="f-rs">Total</th>
-          <th class="f-rs">Pagado</th>
-          <th class="f-rs">Deuda</th>
+        <tr height="50" class="align-middle w-100 d-table">
+          <th class="border-0 sale-col fs-6 p-0 text-dark-teal text-start">Venta</th>
+          <th class="border-0 stats-col fs-6 p-0 text-dark-teal text-end">Total</th>
+          <th class="border-0 stats-col fs-6 p-0 text-dark-teal text-end">Pagado</th>
+          <th class="border-0 stats-col fs-6 p-0 text-dark-teal text-end">Deuda</th>
         </tr>
       </thead>
       <tbody 
-        ref='tbodyRef'
-        :style="{ height: tbodyHeight + 'px' }"
+       :style="{ height: tbodyHeight + 'px' }"
+        class="d-block table-group-divider pb-5 overflow-scroll w-100"
       >
         <div v-if="clientData">
-          <tr
+          <router-link 
             v-for="(sale, idx) in clientData.sales"
             :key="'sale' + idx"
+            :to="`${$route.path}/sale/${sale._id}`"
+            class="row-link d-block border-top px-0 py-3 text-dark-teal text-decoration-none"
           >
-            <router-link 
-              :to="`${$route.path}/sale/${sale._id}`"
+            <tr
+              class="align-middle w-100 d-table"
             >
-              <td class="f-rs">
-                <time class="ls">{{ sale.saleDate }}</time>
-                <ul>
+              <td class="sale-col fs-6 text-start text-dark-teal">
+                <time class="text-dark-teal text-opacity-50 fs-6">{{ sale.saleDate }}</time>
+                <ul class="list-unstyled m-0">
                   <li
                     v-for="(item, itemIdx) in sale.items"
                     :key="'item' + itemIdx"
@@ -46,33 +64,60 @@
                   </li>
                 </ul>
               </td>
-              <td class="f-rs">{{ sale.saleValue }}</td>
-              <td class="f-rs">{{ sale.paidAmount }}</td>
-              <td class="f-rs">{{ sale.unpaidAmount }}</td>
-            </router-link>
-          </tr>
+              <td class="stats-col fs-6 text-end">S/ {{ sale.saleValue }}</td>
+              <td class="stats-col fs-6 text-end">S/ {{ sale.paidAmount }}</td>
+              <td class="stats-col fs-6 text-end">S/ {{ sale.unpaidAmount }}</td>
+            </tr>
+          </router-link>
         </div>
       </tbody>
     </table>
   </section>
-  <PopupButton label="Nueva venta" :url="{ name: 'newsale',  params: { clientid: $route.params.clientid } }" />
+
+  <Modal
+    body="¿Deseas eliminar este cliente?"
+    confirmLabel="Sí, bórralo"
+    rejectLabel="No"
+    confirmEvent="deleteClient"
+    rejectEvent="reject"
+    v-if="displayClientDeletionConfirmation"
+    @deleteClient="deleteClient"
+    @reject="displayClientDeletionConfirmation = false"
+  />
+
+  <PopupButton 
+    label="Nueva venta" 
+    :url="{ 
+      name: 'newsale',  
+      params: { clientid: $route.params.clientid },
+      query: { clientName: clientData?.clientName, clientNameDetails: clientData?.clientNameDetails }
+    }"
+  />
+
 </template>
 
 <script lang='ts'>
 import StatItem from '@/components/stat-item.vue'
 import PopupButton from '@/components/popup-button.vue' 
 import Icon from '@/components/icon.vue'
-import { getReferenceHeight, getReferenceHeight2 } from '@/utils/utility-functions'
-import { defineComponent } from 'vue'
-import { State, Refs, Methods } from '@/types/pages/client-page.types'
+import { getReferenceHeight } from '@/utils/utility-functions'
+import { defineComponent, PropType } from 'vue'
+import { Props, State, Refs, Methods } from '@/types/pages/client-page.types'
 import { Empty } from '@/types/global.types'
 import http from '@/utils/axios-instance'
+import BackLink from '@/components/back-link.vue'
+import EditButton from '@/components/edit-button.vue'
+import DeleteButton from '@/components/delete-button.vue'
+import { format } from 'date-fns'
+import Modal from '@/components/modal.vue'
+import { ClientResBody } from '#backend/client.types'
 
-export default defineComponent<Empty, Empty, State, Empty, Methods>({
+export default defineComponent<any, Empty, State, Empty, Methods>({
   // for some Reason if I pass Props to the first parameter in defineComponent typescript thinks 'props' is undefined, so for now I will let it as any.
 
   data () {
     return {
+      displayClientDeletionConfirmation: false,
       clientData: undefined, // I've tried adding a type predicate to {} | ClientResponse so I can initialize this prop as an empty object instead of undefined but for some reason type  predicates doesn't work on Vue
       tbodyHeight: 0
     }
@@ -80,85 +125,63 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
   methods: {
     async getClientData () {
       try {
-        const res = await http.get(`/clients/${this.$route.params.clientid}?single=true`);
-        console.log('res', res.data.clientData);
+        const res = await http.get<{ clientData: ClientResBody }>(`/clients/${this.$route.params.clientid}?single=true`)
+        const parsedRes = res.data.clientData.sales.map(sale => ({
+          ...sale,
+          saleDate: format(new Date(sale.saleDate), 'dd-MM-yyyy') 
+        }))
+        console.log('parsed res', parsedRes)
 
-        this.clientData = res.data.clientData;
+        this.clientData = parsedRes
       } catch (err) {
         console.error(err)
       }
+    },
+    async deleteClient () {
+      try {
+        const { clientid } = this.$route.params;
+        const { _id: userid } = this.$store.state;
+        await http.delete(`/clients/${userid}/${clientid}`)
+        this.$router.back()
+      } catch (err) {
+        throw new Error(`there was an error, ${err}`)
+      }
+    },
+    declareClientDeletionIntent () {
+      console.log('AAAA');
+      this.displayClientDeletionConfirmation = true
     }
   },
   components: {
     Icon,
     StatItem,
-    PopupButton
+    PopupButton,
+    BackLink,
+    EditButton,
+    DeleteButton,
+    Modal,
+  },
+  watch: {
+    displayClientDeletionConfirmation (newVal) {
+      console.log(newVal);
+    }
   },
   async beforeMount () {
     await this.getClientData();
   },
   mounted () {
     const tbodyHeight = getReferenceHeight(this.$refs as Refs);
+    console.log(tbodyHeight);
     this.tbodyHeight = tbodyHeight;
   }
 })
 </script>
 
 <style scoped>
-#stats-container {
-  justify-content: space-between;
-}
-h1 {
-  font-size: 2.6rem;
-  margin: 0;
-  padding: 0;
-  font-weight: 900;
-}
-#client-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-address {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  font-size: 1.7rem;
-  font-style: normal;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-tr {
-  height: 5rem;
-  width: 100%;
-  display: table;
-}
-thead tr {
-  border-bottom: 2px solid #27373D;
-}
-tbody {
-  overflow: scroll;
-  padding-bottom: 3.5rem;
-  display: block;
-}
-tbody tr + tr {
-  border-top: 1px solid #EDEDED;
-}
-td:nth-child(1), th:nth-child(1) {
+.sale-col {
   width: 40%;
-  text-align: left;
 }
-td:nth-child(n+2):nth-child(-n+4), th:nth-child(n+2):nth-child(-n+4) {
-  width: 20%;
-  text-align: right;
-}
-ul {
-  margin: 0;
-  padding: 0;
-}
-time {
-  color: #6B6B6B;
+.stats-col {
+  width: 20%
 }
 </style>

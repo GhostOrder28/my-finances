@@ -7,8 +7,14 @@ type Payment = {
   amount: number;
 }
 
-type PaymentPostReqBody = Omit<Payment, '_id'> & { _id?: Types.ObjectId; };
-type PaymentPatchReqBody = Omit<Payment, '_id'> & { _id: string | Types.ObjectId; };
+type PaymentPostReqBody = Omit<Payment, '_id' | 'paymentDate'> & { 
+  _id?: Types.ObjectId;
+  paymentDate: Date;
+};
+type PaymentPatchReqBody = Omit<Payment, '_id' | 'paymentDate'> & {
+  _id: string | Types.ObjectId; 
+  paymentDate: Date;
+};
 type PaymentResBody = Omit<Payment, '_id'> & { _id: string };
 type PaymentEditionData = PaymentPatchReqBody & SaleDataForPaymentForm;
 

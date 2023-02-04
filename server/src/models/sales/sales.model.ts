@@ -13,6 +13,7 @@ import {
 } from "../../types/sale.types";
 import { NotFoundError } from "../../errors/db-errors";
 import { strParseIn, strParseOut } from "../../utils/utility-functions";
+import { format } from "date-fns";
 
 const { Types: { ObjectId } } = mongoose;
 
@@ -61,15 +62,17 @@ function getClientDataProjection (clientId: string, saleId: string, projection: 
 async function postSale (clientId: string,  body: SalePostReqBody) {
   let initialPayment;
 
-  body = {
+  const parsedBody = {
     ...body,
+    // saleDate: format(new Date(body.saleDate), 'yyyy/MM/dd'),
+    saleDate: format(new Date(body.saleDate), 'yyyy/MM/dd'),
     items: body.items.map((item) => ({ ...item, name: strParseIn(item.name) }))
   }
   const saleValue = getTotalSaleValue(body.items);
 
-  if (body.payments.length) {
-    body.payments[0]._id = new ObjectId();
-    initialPayment = body.payments[0].amount;
+  if (parsedBody.payments.length) {
+    parsedBody.payments[0]._id = new ObjectId();
+    initialPayment = parsedBody.payments[0].amount;
   } else {
     initialPayment = 0;
   }
@@ -83,7 +86,7 @@ async function postSale (clientId: string,  body: SalePostReqBody) {
       $set: { 
         sales: {
           $concatArrays: [ '$sales', [ {
-            ...body,
+            ...parsedBody,
             saleValue, 
             unpaidAmount,
             paidAmount: initialPayment,
@@ -95,6 +98,8 @@ async function postSale (clientId: string,  body: SalePostReqBody) {
       }
     },
   ];
+
+  console.log('body to insert', parsedBody);
 
   const options = { new: true };
 
@@ -110,6 +115,10 @@ async function postSale (clientId: string,  body: SalePostReqBody) {
 
 async function patchSale (clientId: string, saleId: string, body: Omit<SalePatchReqBody, 'payments'>) {
   const saleValue = getTotalSaleValue(body.items);
+  const parsedBody = {
+    ...body,
+    saleDate: format(new Date(body.saleDate), 'yyyy/MM/dd'),
+  };
   const query = { _id: new ObjectId(clientId) };
 
   const update = [
@@ -122,7 +131,7 @@ async function patchSale (clientId: string, saleId: string, body: Omit<SalePatch
               $cond: [
                 { $eq: [ '$$this._id', new ObjectId(saleId) ] },
                 { $mergeObjects: [ '$$this', { 
-                  ...body,
+                  ...parsedBody,
                   saleValue,
                   unpaidAmount: { $subtract: [ saleValue, '$$this.paidAmount' ] }
                 } ] },

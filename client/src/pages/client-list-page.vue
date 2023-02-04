@@ -1,32 +1,31 @@
 <template>
-  <section id='top-panel'>
-    <div id="stats-container">
-      <StatItem icon="total-debt" label="Deuda total" value="S/ 320" />
-      <StatItem icon="debtor" label="Deudores" value="4" />
+  <section class="container bg-green p-4">
+    <div class="d-flex">
+      <StatItem icon="total-debt" label="Deuda total" :value="receivables" />
+      <StatItem icon="debtor" label="Deudores" :value="debtors" />
     </div>
   </section>
-  <section 
-    id='page-content'
-  >
-    <table ref='tableRef'>
+  <section class='container p-4'>
+    <table class="table w-100 m-0" ref='tableRef'>
       <thead>
-        <tr>
-          <th class="f-rs">Nombre</th>
-          <th class="f-rs">Deuda individual</th>
+        <tr height="50" class="border-bottom border-2 border-dark-teal align-middle w-100 d-table">
+          <th class="fs-6 p-0 text-dark-teal text-start">Nombre</th>
+          <th class="fs-6 p-0 text-dark-teal text-end">Deuda individual</th>
         </tr>
       </thead>
       <tbody 
-        ref='tbodyRef'
         :style="{ height: tbodyHeight + 'px' }"
+        class="d-block overflow-scroll pb-5"
       >
         <router-link 
           v-for="(client, idx) in clientList"
           :key="'client' + idx"
           :to="{ name: 'client', params: { clientid: client._id.toString() } }"
+          class="text-dark-teal text-decoration-none"
         >
-          <tr>
-            <td class="f-rs">{{ client.clientName }}</td>
-            <td class="f-rs">{{ `S/ ${client.currentDebt}` }}</td>
+          <tr height="50" class="align-middle border-bottom w-100 d-table">
+            <td class="fs-6 text-start">{{ client.clientName }}</td>
+            <td class="fs-6 text-end">S/ {{ client.currentDebt }}</td>
           </tr>
         </router-link>
       </tbody>
@@ -44,21 +43,28 @@ import { ClientListItem } from '#backend/client.types'
 import { defineComponent } from 'vue'
 import { State, Methods, Refs } from '@/types/pages/client-list-page.types'
 import { Empty } from '@/types/global.types'
+import { UserAssets } from '#backend/user.types'
 
 // mocks
 export default defineComponent<Empty, Empty, State, Empty, Methods>({
   data () {
     return {
+      receivables: 0,
+      debtors: 0,
       clientList: [],
-      tbodyHeight: 0
+      tbodyHeight: 0,
     }
   },
   methods: {
     async getClients () {
       try {
-        const res = await http.get<{ clientList: ClientListItem[] }>(`/clients/${this.$store.state._id}`);
-        console.log('server response: ', res.data.clientList);
-        this.clientList = res.data.clientList
+        const clientListRes = await http.get<{ clientList: ClientListItem[] }>(`/clients/${this.$store.state._id}`);
+        const userAssetsRes = await http.get<{ userAssets: UserAssets }>(`/users/${this.$store.state._id}`);
+
+        console.log('server response: ', clientListRes.data.clientList);
+        this.clientList = clientListRes.data.clientList
+        this.receivables = userAssetsRes.data.userAssets.receivables
+        this.debtors = userAssetsRes.data.userAssets.debtors
       } catch (err) {
         console.error(err);
       }
@@ -77,34 +83,3 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
   }
 })
 </script>
-
-<style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-tr {
-  height: 5rem;
-  width: 100%;
-  display: table;
-}
-thead tr {
-  border-bottom: 2px solid #27373D;
-}
-tbody {
-  overflow: scroll;
-  padding-bottom: 3.5rem;
-  display: block;
-}
-tbody tr + tr {
-  border-top: 1px solid #EDEDED;
-}
-td:nth-child(1), th:nth-child(1) {
-  width: 60%;
-  text-align: left;
-}
-td:nth-child(2), th:nth-child(2) {
-  width: 40%;
-  text-align: right;
-}
-</style>

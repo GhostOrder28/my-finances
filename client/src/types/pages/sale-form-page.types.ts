@@ -3,10 +3,11 @@ import {
   SalePatchReqBody, 
   Item,
 } from "#backend/sale.types";
+import SaleFormPage from '@/pages/sale-form-page.vue'
 
 type Refs = {
   itemsRef: HTMLElement;
-  actionsRef: HTMLElement;
+  actionsRef: typeof SaleFormPage;
 }
 
 type FormErrors = { [key: string]: string }
@@ -18,6 +19,9 @@ type State = {
   initialPayment: number;
   formState: SalePostReqBody | SalePatchReqBody | Omit<SalePatchReqBody, 'clientName'>;
   formErrors: FormErrors | undefined;
+  dateFormat: {
+    stringify: (date: Date) => string;
+  }
 }
 
 type Methods = {

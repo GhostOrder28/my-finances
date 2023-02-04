@@ -1,11 +1,55 @@
 <template>
-  <div id='navbar'>
-    <div>Mis Finanzas</div>
+  <div id='navbar' class="container d-flex justify-content-between align-items-center px-4 py-3 bg-dark-green">
+    <span class="fs-5 fw-bolder">Mis Finanzas</span>
     <div id='navigation'>
       <Icon name='search' />
-      <Icon name='menu' />
-      <button type='button' @click.prevent="signOut">Salir</button>
+      <button 
+        type="button" 
+        class="bg-transparent border-0"
+        data-bs-toggle="offcanvas" 
+        data-bs-target="#offcanvas" 
+        aria-controls="offcanvas"
+      >
+        <Icon name='menu' />
+      </button>
     </div>
+    <nav 
+      class="offcanvas offcanvas-end d-flex flex-column"
+      id="offcanvas" 
+      aria-labelledby="offcanvas"
+    >
+      <button 
+        class="align-self-end bg-transparent border-0"
+        type="button" 
+        data-bs-dismiss="offcanvas"
+      >
+        <Icon name='close' />
+      </button>
+      <ul class="list-unstyled">
+        <li
+          v-for="(link, idx) in links"
+          :key="'link' + idx"
+          class="fs-3 text-dark-teal"
+        >
+          <!-- <router-link to="/">A</router-link> -->
+          <router-link
+            class="text-decoration-none"
+            :to="{ name: link }"
+          >
+            {{ link.charAt(0).toUpperCase() + link.slice(1) }}
+          </router-link>
+        </li>
+        <li>
+          <button
+            type='button' 
+            @click.prevent="signOut"
+            class="fs-3 fw-bold text-danger bg-transparent border-0"
+          >
+            Salir
+          </button>
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
@@ -14,6 +58,11 @@ import Icon from './icon';
 import { mapActions } from 'vuex'
 
 export default {
+  data () {
+    return {
+      links: [ 'home', 'clients' ]
+    }
+  },
   components: {
     Icon
   },
@@ -29,11 +78,6 @@ export default {
 
 <style lang="scss" scoped>
 #navbar {
-  display: flex;
-  padding: 20px 25px;
-  justify-content: space-between;
-  align-items: center;
-  background-color: dark-green;
 
   & > div:first-child {
     font-size: 2rem;

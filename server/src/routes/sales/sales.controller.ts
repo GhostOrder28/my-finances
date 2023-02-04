@@ -62,9 +62,11 @@ async function httpSubPatchSale (req: Request<HttpSubPatchSaleParams, any, SaleP
 
 async function httpSubGetOneSale (req: Request<HttpSubGetOneSaleParams, any, any, SaleFilters>, res: Response, next: NextFunction) {
   try {
+    console.log('params', req.params);
     const { params: { clientid, saleid }, query } = req;
     let saleData;
     if (query.filter === 'saleform') {
+      console.log('AAA');
       saleData = await getSaleFormData(clientid, saleid);
     } else if (query.filter === 'paymentform') {
       saleData = await getSaleDataForPayment(clientid, saleid);

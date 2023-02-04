@@ -6,11 +6,10 @@
 <script>
 import { defineAsyncComponent } from 'vue';
 const Navigation = defineAsyncComponent(() => import('./components/navigation'));
-import './assets/css/fonts.css';
-import './assets/css/utility-classes.scss';
-import './assets/css/global-styles.scss'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import "./assets/css/fonts.css"
+import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap.js"
+import "./assets/css/bootstrap-extended.scss"
 
 export default {
   components: { 

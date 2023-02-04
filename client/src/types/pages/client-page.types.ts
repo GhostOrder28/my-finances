@@ -1,12 +1,19 @@
 import { ClientResBody } from '#backend/client.types';
 
+type Props = {
+  clientname: string;
+}
+
 type State = {
+  displayClientDeletionConfirmation: boolean;
   clientData: ClientResBody | undefined;
   tbodyHeight: number;
 }
 
 type Methods = {
   getClientData: () => Promise<void>;
+  declareClientDeletionIntent: () => void;
+  deleteClient: () => Promise<void>;
 }
 
 type Computed = {
@@ -19,6 +26,7 @@ type Refs = {
 }
 
 export {
+  Props,
   State,
   Refs,
   Computed,

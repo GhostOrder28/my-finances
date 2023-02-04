@@ -1,7 +1,8 @@
 import { ClientEditableFields } from '#backend/client.types';
+import FormButtons from '@/components/form-buttons.vue'
 
 type State = {
-  sectionHeight: number;
+  formHeight: number;
   formState: ClientEditableFields;
   formErrors: Partial<ClientEditableFields> & {
     notFoundError?: string;
@@ -14,7 +15,8 @@ type Methods = {
 }
 
 type Refs = {
-  sectionRef: HTMLElement
+  formRef: HTMLElement;
+  actionsRef: typeof FormButtons;
 }
 
 export {

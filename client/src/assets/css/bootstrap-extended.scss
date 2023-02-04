@@ -1,0 +1,25 @@
+@import "../../../node_modules/bootstrap/scss/_functions";
+@import "../../../node_modules/bootstrap/scss/_variables";
+
+$custom-colors: (
+  "green": #9AF8C5,
+  "blue": #3768E5,
+  "red": #F55C5C,
+  "turquoise": #7CC7B5,
+  "light-red": #FDDADA,
+  "dark-blue": #2A4DA7,
+  "light-purple": #CBD8FB,
+  "purple": #CBD8FB,
+  "dark-green": #8EECB9,
+  "dark-teal": #27373D,
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+@import "../../../node_modules/bootstrap/scss/bootstrap.scss"
+
+// why is this last import needed? according to the docs 
+// https://getbootstrap.com/docs/5.3/customize/sass/
+// this shoudn't be needed
+
+

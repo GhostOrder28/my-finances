@@ -17,7 +17,7 @@ function isString (data: ChangeStreamDocument | string): data is string {
 
 async function getUserAssets (userId: string) {
   try {
-    const userAssets = await usersCollection.findById(userId, { receivables: 1, debtors: 1 });
+    const userAssets = await usersCollection.findById(userId, { receivables: 1, debtors: 1, totalSalesValue: 1 });
     if (userAssets) {
       return userAssets;
     } else {

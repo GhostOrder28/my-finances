@@ -17,6 +17,7 @@ type HttpHttpSubGetOnePayment = HttpSubPatchPaymentParams;
 async function httpSubPostPayment (req: Request<HttpSubPostPaymentParams, any, PaymentPostReqBody>, res: Response, next: NextFunction) {
   try {
     const { params: { clientid, saleid }, body } = req;
+    console.log('req body', body);
 
     const { error } = paymentValidator.validate(body, { abortEarly: false });
     if (error) throw new ValidationError('there was an error validating the input', getValidationErrorMessages(error.details));
@@ -65,8 +66,9 @@ async function httpSubGetOnePayment (req: Request<HttpHttpSubGetOnePayment, any,
 async function httpSubDeletePayment (req: Request<HttpSubDeletePaymentParams, any, any>, res: Response, next: NextFunction) {
   const { clientid, saleid, paymentid } = req.params;
   try {
-    const paymentId = await deletePayment(clientid, saleid, paymentid);
-    return res.status(200).json({ paymentId });
+    console.log('params', req.params);
+    const affectedSaleFields = await deletePayment(clientid, saleid, paymentid);
+    return res.status(200).json({ affectedSaleFields });
   } catch (err) {
     if (err instanceof NotFoundError) return next(err);
     if (err instanceof ValidationError) return next(err);

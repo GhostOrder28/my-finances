@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { signup } from "../../models/auth/auth.model";
 import { UserCredentials, SignupData } from "../../types/auth.types";
-import { User } from "../../types/auth.types";
+import { User } from "../../types/user.types";
 import { signupValidator, signinValidator } from "../../joi/auth.validators";
 import { ValidationError } from "../../errors/server-errors";
 import { getValidationErrorMessages } from "../../utils/utility-functions";

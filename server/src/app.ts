@@ -7,7 +7,7 @@ import cookieSession from 'cookie-session';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { AUTH_OPTIONS, verifyCallback } from './passport/local.passport';
 import { cookieSessionOptions } from './middlewares/cookie-session.middleware';
-import { User } from './types/auth.types';
+import { User } from './types/user.types';
 import checkLoggedIn from './middlewares/check-logged-in';
 import errorHandler from './errors/error-handler';
 
@@ -18,24 +18,24 @@ import clientsRouter from './routes/clients/clients.router';
 
 const corsOptions = {
   origin: 'https://192.168.100.3:8080',
+  // origin: 'https://localhost:8080',
   credentials: true,
 };
 
 const app = express();
-
 passport.use(new LocalStrategy(AUTH_OPTIONS, verifyCallback));
 passport.serializeUser((userData, done) => {
   // done(null, userData._id.toString()); // here typescript doesn't yell on vim but it does on the server
   done(null, (userData as User)._id.toString());
-  console.log('serializing user...');
+  console.log('serializing user...', (userData as User)._id.toString());
 });
 passport.deserializeUser<string>((userId, done) => {
-  // console.log('deserializing user: ', userId)
+  console.log('deserializing user: ', userId)
   done(null, userId); 
 });
 
 app.use(morgan('combined'));
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(cookieSession(cookieSessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());

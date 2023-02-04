@@ -249,3 +249,24 @@ http.interceptors.response.use(
 However for some reason this interceptor only works if the client made the request to the server from the root `https://localhost:3001/` route, if the client make a request from any other route e.g. `https://localhost:3001/clients` the interceptor is not called at all.
 
 I think the reason is that once the `checkLoggedIn` middleware fails to check the login it throws an Error, consecuently express omit all the next middlewares and one of those middlewares is the wildcard one which is the one that handles all the routes from the app, and this is why the client only gets a message as a response, that is the json formatted message that the servr is sending, it is not sending `index.js`. This however doesn't explain why express is sending `index.js` correctly when the request in made from the root route.
+
+## Passportjs isAuthenticated method returns false in chrome.
+### Solution.
+Set `sameSite` options to none in `cookieSessionOptions`:
+```lang-js
+const cookieSessionOptions = {
+  sameSite: 'none'
+}
+```
+
+# Frontend.
+
+## Vertical scroll appearing randomly in pages. 
+
+### The issue.
+When I resize the viewport horizontally and then refresh the page (F5) sometimes a verticall scroll appears along with the vertical scroll from the `tbody`.
+
+### Debugging.
+
+* In the cases when this scroll appears the `table offset top` is 78 pixels lesser than what it usually is (222 vs 144) and 78 happen to be the navigation bar height, so it seems that sometimes the `navigation.vue` component takes a little bit more to load than the `client-page.vue` component and I assume the same is going to happen fo the other pages.
+

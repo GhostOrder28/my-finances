@@ -37,25 +37,6 @@ const routes: Array<RouteRecordRaw> = [
     name: 'client',
     path: '/client/:clientid',
     component: ClientPage,
-    // children: [
-      // {
-      //   name: 'sale',
-      //   path: 'sale/:saleid',
-      //   component: SalePage,
-      //   children: [
-      //     {
-      //       name: 'newpayment',
-      //       path: 'newpayment',
-      //       component: NewPaymentPage
-      //     }
-      //   ]
-      // },
-      // {
-      //   name: 'newsale',
-      //   path: 'newsale',
-      //   component: NewSalePage
-      // }
-    // ]
   },
   {
     name: 'newclient',
@@ -99,14 +80,16 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(function (to, from, next) {
-  const { path } = to;
-  if (path === '/signin' || path === '/signup') {
-    store.state.email.length ? next(from.path) : next()
-  } else {
-    store.state.email.length ? next() : next('/signin')
-  }
-  next()
-})
+// router.beforeEach(function (to, from, next) {
+//   const { path } = to;
+//   if (path === '/signin' || path === '/signup') {
+//     store.state.email.length ? next(from.path) : next()
+//     return;
+//   } else {
+//     store.state.email.length ? next() : next('/signin')
+//     return;
+//   }
+//   // next()
+// })
 
 export default router

@@ -20,11 +20,14 @@ type Sale = {
   unpaidAmount: number;
 };
 
-type SalePostReqBody = Pick<Sale, 'saleDate' | 'items'> & {
+type SalePostReqBody = Pick<Sale, 'items'> & {
   payments: PaymentPostReqBody[];
+  saleDate: Date;
 }
 
-type SalePatchReqBody = Pick<Sale, 'saleDate' | 'items'>;
+type SalePatchReqBody = Pick<Sale, 'items'> & {
+  saleDate: Date;
+};
 
 type SaleResBody = Omit<Sale, '_id' | 'items' | 'payments'> & { 
   _id: string;
@@ -35,6 +38,7 @@ type SaleResBody = Omit<Sale, '_id' | 'items' | 'payments'> & {
 type SaleFormData = SalePatchReqBody & Pick<Client, 'clientName' | 'clientNameDetails'>; // this should be called SaleFormPageData or smth like that
 type ClientAndSaleResBody = Omit<ClientResBody, 'sales'> & { sales: SaleResBody }; // this should be plainly called ClientAndSaleData
 type SaleDataForPaymentForm = Pick<Client, 'clientName' | 'clientNameDetails'> & Pick<Sale, 'unpaidAmount' | 'saleDate'>;
+type SaleAfterPayment = Pick<Sale, 'paidAmount' | 'unpaidAmount'>;
 
 function isSalePostReqBody (saleReqBody: SalePostReqBody | SalePatchReqBody | SalePatchReqBody): saleReqBody is SalePostReqBody {
   return (saleReqBody as SalePostReqBody).payments !== undefined;   
@@ -58,6 +62,7 @@ export {
   SalePostReqBody,
   SalePatchReqBody,
   SaleFormData,
+  SaleAfterPayment,
   isSalePostReqBody,
   isSaleFormResBody,
   isClientAndSaleResBody,
