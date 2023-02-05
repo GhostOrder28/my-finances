@@ -21,7 +21,6 @@ const PORT = process.env.PORT || 3001;
 
 async function startServer () {
   await mongoConnect();
-  console.log(`PORT is ${PORT}`);
   server.listen(PORT, () => { console.log(`listening to port ${PORT}`); })
 };
 
