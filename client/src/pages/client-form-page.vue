@@ -39,6 +39,7 @@
     <FormButtons 
       ref="actionsRef"
       :confirmLabel="$route.name === 'newclient' ? 'Añadir client' : 'Confirmar'"
+      @formSubmit="handleSubmit"
       cancelLabel="Cancelar"
     />
   </section>
