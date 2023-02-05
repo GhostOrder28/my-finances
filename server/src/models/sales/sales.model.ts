@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
-import clientsCollection from "../clients/clients.schema";
-import { 
+import { format } from "date-fns";
+
+import { NotFoundError } from "../../errors/db-errors.js";
+import clientsCollection from "../clients/clients.schema.js";
+import { strParseIn, strParseOut } from "../../utils/utility-functions.js";
+
+import {
   SaleFormData, 
   SalePostReqBody, 
   SalePatchReqBody, 
@@ -8,12 +13,7 @@ import {
   Payment,
   ClientAndSaleResBody,
   SaleDataForPaymentForm,
-  isClientAndSaleResBody,
-  isSaleFormResBody,
-} from "../../types/sale.types";
-import { NotFoundError } from "../../errors/db-errors";
-import { strParseIn, strParseOut } from "../../utils/utility-functions";
-import { format } from "date-fns";
+} from "../../types/sale.types.js";
 
 const { Types: { ObjectId } } = mongoose;
 
@@ -64,7 +64,6 @@ async function postSale (clientId: string,  body: SalePostReqBody) {
 
   const parsedBody = {
     ...body,
-    // saleDate: format(new Date(body.saleDate), 'yyyy/MM/dd'),
     saleDate: format(new Date(body.saleDate), 'yyyy/MM/dd'),
     items: body.items.map((item) => ({ ...item, name: strParseIn(item.name) }))
   }
@@ -167,6 +166,7 @@ async function patchSale (clientId: string, saleId: string, body: Omit<SalePatch
 async function getOneSale (clientId: string, saleId: string) {
   try {
     const [ dbResponse ] = await clientsCollection.aggregate<ClientAndSaleResBody>(saleDataAggregation(clientId, saleId));
+    console.log('db response before parsing', dbResponse);
 
     if (!dbResponse) throw new NotFoundError(`El cliente o la venta no existe.`);
 
@@ -176,6 +176,7 @@ async function getOneSale (clientId: string, saleId: string) {
     dbResponse.clientName = strParseOut(dbResponse.clientName);
     dbResponse.clientNameDetails = strParseOut(dbResponse.clientNameDetails);
 
+    console.log('db response after parsing', dbResponse);
     return dbResponse;
   } catch (err) {
     throw new Error(`there was an error: ${err}`)

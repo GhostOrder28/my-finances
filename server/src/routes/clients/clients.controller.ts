@@ -1,17 +1,19 @@
 import { Request, Response, NextFunction } from "express";
+
 import { 
   postClient, 
   patchClient, 
   getClients, 
   getOneClient, 
   deleteOneClient 
-} from "../../models/clients/clients.model";
-import { ClientEditableFields } from "../../types/client.types";
-import { SingleQuery, HttpUseridParam, HttpClientidParam } from "../../types/global.types";
-import { qsToBool, strParseIn, strParseOut, getValidationErrorMessages } from "../../utils/utility-functions";
-import clientValidators from "../../joi/client.validators";
-import { ValidationError } from "../../errors/server-errors";
-import { NotFoundError } from '../../errors/db-errors';
+} from "../../models/clients/clients.model.js";
+import { NotFoundError } from "../../errors/db-errors.js";
+import clientValidators from "../../joi/client.validators.js";
+import { ValidationError } from "../../errors/server-errors.js";
+import { qsToBool, getValidationErrorMessages } from "../../utils/utility-functions.js";
+
+import { ClientEditableFields } from "../../types/client.types.js";
+import { SingleQuery, HttpUseridParam, HttpClientidParam } from "../../types/global.types.js";
 
 type httpDeleteOneClientParams = HttpUseridParam & HttpClientidParam;
 

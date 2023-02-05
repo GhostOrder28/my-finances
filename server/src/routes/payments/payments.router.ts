@@ -1,5 +1,6 @@
-import express from 'express';
-import { httpSubPostPayment, httpSubPatchPayment, httpSubDeletePayment, httpSubGetOnePayment } from './payments.controller';
+import express from "express";
+
+import { httpSubPostPayment, httpSubPatchPayment, httpSubDeletePayment, httpSubGetOnePayment } from "./payments.controller.js";
 
 const paymentsRouter = express.Router({ mergeParams: true });
 

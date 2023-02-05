@@ -26,3 +26,4 @@ pnpm-debug.log*
 /server/.env
 commit-msg.md
 doubts.rmd
+/server/src/security

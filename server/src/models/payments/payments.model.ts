@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
-import clientsCollection from "../clients/clients.schema";
-import { PaymentPostReqBody } from "../../types/payment.types";
-import { PaymentPatchReqBody, PaymentEditionData } from "../../types/payment.types";
-import { ClientDocumentResponse, Client } from "../../types/client.types";
-import { NotFoundError } from '../../errors/db-errors';
-import { strParseIn, strParseOut } from "../../utils/utility-functions";
 import { format } from "date-fns";
+
+import { NotFoundError } from "../../errors/db-errors.js";
+import clientsCollection from "../clients/clients.schema.js";
+import { strParseOut } from "../../utils/utility-functions.js";
+
+import { PaymentPostReqBody } from "../../types/payment.types.js";
+import { ClientDocumentResponse } from "../../types/client.types.js";
+import { PaymentPatchReqBody, PaymentEditionData } from "../../types/payment.types.js";
 
 const { Types: { ObjectId } } = mongoose;
 

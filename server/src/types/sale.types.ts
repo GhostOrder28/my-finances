@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
-import { Payment, PaymentPostReqBody, PaymentEditionData, PaymentResBody } from "./payment.types";
 import { Client, ClientResBody } from "./client.types";
+import { Payment, PaymentPostReqBody, PaymentResBody } from "./payment.types";
 
 type Item = {
   name: string;

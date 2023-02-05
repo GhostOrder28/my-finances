@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import { User } from "../../types/user.types";
+
+import { User } from "../../types/user.types.js";
 
 const { Schema } = mongoose;
 

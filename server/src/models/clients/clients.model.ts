@@ -1,11 +1,13 @@
 import { Types } from "mongoose";
-import clientsCollection from "./clients.schema";
-import usersSchema from '../users/users.schema';
-import { Client, ClientEditableFields } from "../../types/client.types";
-import { NotFoundError } from "../../errors/db-errors";
-import { patchUserAssets } from '../users/users.model';
-import { strParseIn, strParseOut } from "../../utils/utility-functions";
-import { Sale } from '../../types/sale.types';
+
+import usersSchema from "../users/users.schema.js";
+import clientsCollection from "./clients.schema.js";
+import { NotFoundError } from "../../errors/db-errors.js";
+import { patchUserAssets } from "../users/users.model.js";
+import { strParseIn, strParseOut } from "../../utils/utility-functions.js";
+
+import { Sale } from "../../types/sale.types.js";
+import { Client, ClientEditableFields } from "../../types/client.types.js";
 
 const { ObjectId } = Types;
 
@@ -125,7 +127,7 @@ async function deleteOneClient (userId: string, clientId: string) {
       await usersSchema.findOneAndUpdate(query, update);
     };
 
-    // await patchUserAssets(userId);
+    await patchUserAssets(userId);
 
     return clientId;
 

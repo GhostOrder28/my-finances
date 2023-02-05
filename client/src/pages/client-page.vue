@@ -126,13 +126,13 @@ export default defineComponent<any, Empty, State, Empty, Methods>({
     async getClientData () {
       try {
         const res = await http.get<{ clientData: ClientResBody }>(`/clients/${this.$route.params.clientid}?single=true`)
-        const parsedRes = res.data.clientData.sales.map(sale => ({
+        const parsedSales = res.data.clientData.sales.map(sale => ({
           ...sale,
           saleDate: format(new Date(sale.saleDate), 'dd-MM-yyyy') 
         }))
-        console.log('parsed res', parsedRes)
+        console.log('parsed res', parsedSales)
 
-        this.clientData = parsedRes
+        this.clientData = { ...res.data.clientData, sales: parsedSales }
       } catch (err) {
         console.error(err)
       }

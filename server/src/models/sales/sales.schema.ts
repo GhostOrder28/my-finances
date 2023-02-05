@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
-import paymentsSchema from "../payments/payments.schema";
-import { Item, Sale } from '../../types/sale.types';
+
+import paymentsSchema from "../payments/payments.schema.js";
+
+import { Item, Sale } from "../../types/sale.types.js";
 
 const { Schema } = mongoose;
 

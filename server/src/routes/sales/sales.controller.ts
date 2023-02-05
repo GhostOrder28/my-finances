@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-import { postSale, patchSale, deleteSale, getOneSale, getSaleFormData, getSaleDataForPayment } from "../../models/sales/sales.model";
-import { SalePostReqBody, SalePatchReqBody } from "../../types/sale.types";
-import { getValidationErrorMessages, groupValidationErrors, qsToBool } from "../../utils/utility-functions";
-import { DeleteQuery, SaleFilters } from "../../types/global.types";
-import { postSaleValidator, patchSaleValidator } from "../../joi/sales.validators";
-import { ValidationError } from "../../errors/server-errors";
-import { NotFoundError } from '../../errors/db-errors';
+
+import { NotFoundError } from "../../errors/db-errors.js";
+import { ValidationError } from "../../errors/server-errors.js";
+import { postSaleValidator, patchSaleValidator } from "../../joi/sales.validators.js";
+import { getValidationErrorMessages, groupValidationErrors, qsToBool } from "../../utils/utility-functions.js";
+import { postSale, patchSale, deleteSale, getOneSale, getSaleFormData, getSaleDataForPayment } from "../../models/sales/sales.model.js";
+
+import { DeleteQuery, SaleFilters } from "../../types/global.types.js";
+import { SalePostReqBody, SalePatchReqBody } from "../../types/sale.types.js";
 
 type HttpSubPostSaleParams = { clientid: string; }
 type HttpSubPatchSaleParams = HttpSubPostSaleParams & { saleid: string };

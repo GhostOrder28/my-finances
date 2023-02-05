@@ -1,6 +1,7 @@
 import { NextFunction } from "express";
-import { NotFoundError } from "../errors/db-errors";
-import { ValidationError } from "./server-errors";
+
+import { ValidationError } from "./server-errors.js";
+import { NotFoundError } from "../errors/db-errors.js";
 
 function checkCommonErrors (err: Error, nextFn: NextFunction) {
   if (err instanceof NotFoundError) return nextFn(err);

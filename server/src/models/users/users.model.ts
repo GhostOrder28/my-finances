@@ -1,9 +1,11 @@
-import mongoose from 'mongoose';
-import usersCollection from './users.schema';
-import clientsCollection from '../clients/clients.schema';
-import { NotFoundError } from '../../errors/db-errors';
-import { ChangeStreamDocument } from 'mongodb';
-import { Client } from '../../types/client.types';
+import mongoose from "mongoose";
+import { ChangeStreamDocument } from "mongodb";
+
+import usersCollection from "./users.schema.js";
+import { NotFoundError } from "../../errors/db-errors.js";
+import clientsCollection from "../clients/clients.schema.js";
+
+import { Client } from "../../types/client.types.js";
 
 const { Types: { ObjectId } } = mongoose;
 

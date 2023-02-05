@@ -1,4 +1,4 @@
-import mongoose, { Types } from 'mongoose';
+import mongoose, { Types } from "mongoose";
 import { Sale, SaleResBody } from "./sale.types" 
 
 type Client = {

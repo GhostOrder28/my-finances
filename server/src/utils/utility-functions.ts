@@ -1,4 +1,13 @@
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 import { ValidationError, ValidationErrorItem } from "joi";
+
+function fileDirName(meta: any) {
+  const __filename = fileURLToPath(meta.url);
+  const __dirname = dirname(__filename);
+
+  return { __dirname, __filename };
+}
 
 function qsToBool (qs: string) {
   return (qs.toLowerCase() === 'true')
@@ -81,5 +90,5 @@ export {
   strParseIn,
   getValidationErrorMessages,
   groupValidationErrors,
-  capFirst
+  fileDirName,
 }

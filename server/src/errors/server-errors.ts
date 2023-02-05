@@ -1,4 +1,4 @@
-import { ValidationErrors } from "../types/utils/utility-functions.types";
+import { ValidationErrors } from "../types/utils/utility-functions.types.js";
 
 class AuthorizationError extends Error {
   constructor(message: string) {

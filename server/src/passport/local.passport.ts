@@ -1,8 +1,10 @@
-import { signin } from "../models/auth/auth.model";
-import { VerifyOptions } from "../types/passport.types";
-import bcrypt from 'bcrypt';
-import { ValidationError } from "../errors/server-errors";
-import { AuthenticationError } from '../errors/server-errors';
+import bcrypt from "bcrypt";
+
+import { signin } from "../models/auth/auth.model.js";
+import { ValidationError } from "../errors/server-errors.js";
+import { AuthenticationError } from "../errors/server-errors.js";
+
+import { VerifyOptions } from "../types/passport.types.js";
 
 type DoneCallback = (error: any, user?: any, options?: VerifyOptions) => void
 

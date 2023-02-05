@@ -1,6 +1,7 @@
-import express from 'express';
-import { httpSignup, httpSignin, httpSignout } from './auth.controller';
-import passport from 'passport';
+import express from "express";
+import passport from "passport";
+
+import { httpSignup, httpSignin, httpSignout } from "./auth.controller.js";
 
 const authRouter = express.Router();
 

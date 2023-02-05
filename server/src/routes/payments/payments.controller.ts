@@ -1,13 +1,15 @@
 import { Request, Response, NextFunction } from "express";
-import { HttpSubPatchSaleParams } from "../sales/sales.controller";
-import { postPayment, patchPayment, getOnePayment, deletePayment } from "../../models/payments/payments.model";
-import { qsToBool } from "../../utils/utility-functions";
-import { PaymentPatchReqBody, PaymentPostReqBody } from "../../types/payment.types";
-import { DeleteQuery } from "../../types/global.types";
-import { NotFoundError } from "../../errors/db-errors";
-import { ValidationError } from "../../errors/server-errors";
-import { paymentValidator } from '../../joi/payment.validators';
-import { getValidationErrorMessages } from '../../utils/utility-functions';
+
+import { NotFoundError } from "../../errors/db-errors.js";
+import { qsToBool } from "../../utils/utility-functions.js";
+import { ValidationError } from "../../errors/server-errors.js";
+import { paymentValidator } from "../../joi/payment.validators.js";
+import { HttpSubPatchSaleParams } from "../sales/sales.controller.js";
+import { getValidationErrorMessages } from "../../utils/utility-functions.js";
+import { postPayment, patchPayment, getOnePayment, deletePayment } from "../../models/payments/payments.model.js";
+
+import { DeleteQuery } from "../../types/global.types.js";
+import { PaymentPatchReqBody, PaymentPostReqBody } from "../../types/payment.types.js";
 
 type HttpSubPostPaymentParams = HttpSubPatchSaleParams;
 type HttpSubPatchPaymentParams = HttpSubPatchSaleParams & { paymentid: string };

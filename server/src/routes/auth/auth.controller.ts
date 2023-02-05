@@ -1,11 +1,13 @@
+import bcrypt from "bcrypt";
 import { Request, Response, NextFunction } from "express";
-import { signup } from "../../models/auth/auth.model";
-import { UserCredentials, SignupData } from "../../types/auth.types";
-import { User } from "../../types/user.types";
-import { signupValidator, signinValidator } from "../../joi/auth.validators";
-import { ValidationError } from "../../errors/server-errors";
-import { getValidationErrorMessages } from "../../utils/utility-functions";
-import bcrypt from 'bcrypt';
+
+import { signup } from "../../models/auth/auth.model.js";
+import { ValidationError } from "../../errors/server-errors.js";
+import { getValidationErrorMessages } from "../../utils/utility-functions.js";
+import { signupValidator, signinValidator } from "../../joi/auth.validators.js";
+
+import { User } from "../../types/user.types.js";
+import { UserCredentials, SignupData } from "../../types/auth.types.js";
 
 async function httpSignup (req: Request<any, any, SignupData>, res: Response, next: NextFunction) {
   try {

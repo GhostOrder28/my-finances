@@ -200,17 +200,22 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
       try {
         const { clientid, saleid } = this.$route.params;
         const res = await http.get<{ saleData: ClientAndSaleResBody }>(`/clients/${clientid}/sales/${saleid}`)
-        const parsedRes = res.data.saleData
+        // console.log('res', res.data.saleData);
+        const parsedRes = { ...res.data.saleData }
         parsedRes.sales.saleDate = format(new Date(parsedRes.sales.saleDate), 'dd-MM-yyyy')
         parsedRes.sales.payments = parsedRes.sales.payments.map(payment => ({
           ...payment, 
           paymentDate: format(new Date(payment.paymentDate), 'dd-MM-yyyy') 
         }))
 
+        // console.log('parsed res', parsedRes)
+
         this.clientData = parsedRes
       } catch (err) {
         if (isAxiosError(err)) {
           console.error(err.response)
+        } else {
+          throw new Error(`there was an error, ${err}`)
         }
       }
       // this.clientData = responseMock.saleData

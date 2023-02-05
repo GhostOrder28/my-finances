@@ -8,7 +8,9 @@
     "watch-server": "npm run watch --prefix server",
     "start-server": "npm run start --prefix server",
     "watch": "npm run watch-client & npm run watch-server",
-    "build": "npm run build --prefix client",
+    "build-client": "npm run build --prefix client",
+    "build-server": "npm run build --prefix server",
+    "start-app": "npm run build-client && npm run start-server",
     "deploy": "npm run build --prefix client & npm run watch-server"
   },
   "author": "",

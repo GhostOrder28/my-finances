@@ -1,12 +1,13 @@
-import express from 'express';
-import salesRouter from '../sales/sales.router';
+import express from "express";
+
 import { 
   httpPostClient, 
   httpPatchClient, 
   httpGetClients,
   httpGetOneClient,
   httpDeleteOneClient,
-} from './clients.controller';
+} from "./clients.controller.js";
+import salesRouter from "../sales/sales.router.js";
 
 const clientsRouter = express.Router();
 

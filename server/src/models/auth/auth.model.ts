@@ -1,9 +1,10 @@
-import userModel from "../users/users.schema";
-import { SignupData } from "../../types/auth.types";
-import { DuplicateEntityError } from "../../errors/db-errors";
-import { AuthenticationError } from "../../errors/server-errors";
 import { Error } from "mongoose";
-import { MongoServerError } from 'mongodb';
+import { MongoServerError } from "mongodb";
+
+import userModel from "../users/users.schema.js";
+import { DuplicateEntityError } from "../../errors/db-errors.js";
+
+import { SignupData } from "../../types/auth.types.js";
 
 async function signup (body: SignupData) {
   const { username, email, password, hashedPwd } = body;

@@ -1,22 +1,16 @@
-import dotenv from 'dotenv';
-dotenv.config();
-import { mongoConnect } from './services/mongo';
-import http from 'http';
-import https from 'https';
-import path from 'path';
-import { readFileSync } from 'fs';
-import app from './app';
-import express from 'express';
-import cors from 'cors';
+import "dotenv/config";
+// import dotenv from 'dotenv';
+// dotenv.config();
+// import http from "http";
+import path from "path";
+import https from "https";
+import { readFileSync } from "fs";
 
-// const app = express();
-// app.use(cors());
-app.get('/test', (req, res) => {
-  console.log('success!');
-  return res.status(200).json('success!');
-})
+import app from "./app.js";
+import { mongoConnect } from "./services/mongo.js";
 
 // const server = http.createServer(app);
+
 
 const server = https.createServer({
   cert: readFileSync(`${path.resolve()}/src/security/localhost.crt`),
@@ -31,3 +25,5 @@ async function startServer () {
 };
 
 startServer();
+
+export {}

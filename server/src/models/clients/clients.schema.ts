@@ -1,8 +1,9 @@
 import mongoose, { Types } from "mongoose";
-// const { Types: { ObjectId } } = mongoose;
-import salesSchema from "../sales/sales.schema";
-import { Client } from "../../types/client.types";
-import { patchUserAssets } from '../users/users.model';
+
+import salesSchema from "../sales/sales.schema.js";
+import { patchUserAssets } from "../users/users.model.js";
+
+import { Client } from "../../types/client.types.js";
 
 const { Schema } = mongoose;
 

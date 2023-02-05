@@ -1,11 +1,12 @@
-import express from 'express';
+import express from "express";
+
 import { 
   httpSubPostSale, 
   httpSubPatchSale, 
   httpSubDeleteSale, 
   httpSubGetOneSale,
-} from './sales.controller';
-import paymentsRouter from '../payments/payments.router';
+} from "./sales.controller.js";
+import paymentsRouter from "../payments/payments.router.js";
 
 const salesRouter = express.Router({ mergeParams: true });
 

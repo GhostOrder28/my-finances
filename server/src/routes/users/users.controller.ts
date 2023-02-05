@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { getUserAssets } from "../../models/users/users.model";
+
+import { getUserAssets } from "../../models/users/users.model.js";
 
 type Params = { userid: string };
 

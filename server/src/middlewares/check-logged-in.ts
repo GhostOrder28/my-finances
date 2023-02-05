@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { AuthorizationError } from "../errors/server-errors";
+
+import { AuthorizationError } from "../errors/server-errors.js";
 
 async function checkLoggedIn (req: Request, _: Response, next: NextFunction) {
   console.log('checking authorization...');

@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2015",                          
-    "module": "commonjs",                    
+    "target": "es2020",
+    "module": "es2020",
+    "moduleResolution": "node",
     "lib": ["es2021"],                     
     "allowJs": true,
     "rootDir": "src",
+    "outDir": "build",                                   
     "strict": true,         
     "noImplicitAny": true,
     "esModuleInterop": true,

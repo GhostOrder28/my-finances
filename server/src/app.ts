@@ -1,20 +1,24 @@
-import express, { Response, Request } from 'express';
-import path from 'path';
-import morgan from 'morgan';
-import cors from 'cors';
-import passport from 'passport';
-import cookieSession from 'cookie-session';
-import { Strategy as LocalStrategy } from 'passport-local';
-import { AUTH_OPTIONS, verifyCallback } from './passport/local.passport';
-import { cookieSessionOptions } from './middlewares/cookie-session.middleware';
-import { User } from './types/user.types';
-import checkLoggedIn from './middlewares/check-logged-in';
-import errorHandler from './errors/error-handler';
+import cors from "cors";
+import path from "path";
+import morgan from "morgan";
+import passport from "passport";
+import cookieSession from "cookie-session";
+import express, { Response } from "express";
+import { Strategy as LocalStrategy } from "passport-local";
 
-import authRouter from './routes/auth/auth.router'; 
-import usersRouter from './routes/users/users.router';
-import clientsRouter from './routes/clients/clients.router';
+import errorHandler from "./errors/error-handler.js";
+import { fileDirName } from "./utils/utility-functions.js";
+import checkLoggedIn from "./middlewares/check-logged-in.js";
+import { AUTH_OPTIONS, verifyCallback } from "./passport/local.passport.js";
+import { cookieSessionOptions } from "./middlewares/cookie-session.middleware.js";
 
+import authRouter from "./routes/auth/auth.router.js"; 
+import usersRouter from "./routes/users/users.router.js";
+import clientsRouter from "./routes/clients/clients.router.js";
+
+import { User } from "./types/user.types.js";
+
+const { __dirname } = fileDirName(import.meta);
 
 const corsOptions = {
   origin: 'https://192.168.100.3:8080',
@@ -39,22 +43,23 @@ app.use(cors(corsOptions));
 app.use(cookieSession(cookieSessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 app.get('/signin', (_, res: Response) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
+  console.log(`/signin endpoint reached, sending ${path.join(__dirname, "public", "index.html")} file`);
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.get('/signup', (_, res: Response) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.use('/auth', authRouter);
-app.use(checkLoggedIn);
+// app.use(checkLoggedIn);
 
 app.use('/users', usersRouter);
 app.use('/clients', clientsRouter);
 app.get('/*', function (_, res: Response) { 
-  res.sendFile(path.join(__dirname, "../public/index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.use(errorHandler);
 

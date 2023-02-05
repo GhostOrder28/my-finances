@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi from "joi";
 
 const patchSaleValidator = Joi.object().keys({
   saleDate: Joi.date()
