@@ -17,7 +17,7 @@ const server = https.createServer({
   key: readFileSync(`${path.resolve()}/src/security/localhost.key`),
 }, app);
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 async function startServer () {
   await mongoConnect();
