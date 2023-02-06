@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="d-flex gap-2 align-items-center fs-6 btn rounded-pill bg-turquoise text-decoration-none"
+    class="link-custom d-flex gap-2 align-items-center btn rounded-pill bg-turquoise text-decoration-none"
     :to="url" 
   >
     {{ label ? 'Modificar' : '' }}
@@ -27,3 +27,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.link-custom {
+  font-size: .85rem;
+}
+</style>

@@ -32,6 +32,7 @@
           single
           @formSubmit="handleSubmit"
         />
+        <button type="button" @click="handleTest">Test</button>
       </form>
     </div>
   </div>
@@ -40,6 +41,7 @@
 <script>
 import { mapActions } from 'vuex'
 import FormButtons from '@/components/form-buttons.vue'
+import http from '@/utils/axios-instance'
 
 export default {
   data () {
@@ -73,6 +75,10 @@ export default {
         console.error(err)
         // console.error('Necesitas llenar todos los campos requeridos.');
       }
+    },
+    async handleTest () {
+      const res = await http.get('/test');
+      console.log('res', res.data);
     },
     ...mapActions([ 'signinUser', 'signupUser', 'signoutUser' ]),
   },

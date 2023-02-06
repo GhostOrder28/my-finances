@@ -36,7 +36,7 @@ type SaleResBody = Omit<Sale, '_id' | 'items' | 'payments'> & {
 }
 
 type SaleFormData = SalePatchReqBody & Pick<Client, 'clientName' | 'clientNameDetails'>; // this should be called SaleFormPageData or smth like that
-type ClientAndSaleResBody = Omit<ClientResBody, 'sales'> & { sales: SaleResBody }; // this should be plainly called ClientAndSaleData
+type ClientAndSaleResBody = Omit<ClientResBody, 'sales'> & { sale: SaleResBody }; // this should be plainly called ClientAndSaleData
 type SaleDataForPaymentForm = Pick<Client, 'clientName' | 'clientNameDetails'> & Pick<Sale, 'unpaidAmount' | 'saleDate'>;
 type SaleAfterPayment = Pick<Sale, 'paidAmount' | 'unpaidAmount'>;
 

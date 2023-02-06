@@ -1,9 +1,9 @@
-Ajustments and fixes for deployment.
+Frontend.
+* sale-page.vue title was change from 'venta realizada a...' to just 'venta a...'.
+* back-link label was changed to 'regresar al cliente', without the name of the client.
+* layout was modified in sale-page.vue.
+* in client-page.vue rows and cols were used instead of flex to set the layout of the stats panel.
 
-* unused imports were removed.
-* all imports now use double quotes.
-* .js extension was specified for all imports.
-* imports were rearranged following a length and type criteria.
-* build files generated for the node server.
-* new utility function to emulate the commonJS __dirname and __file global variables since.
-* new npm scripts to generate server build files and to fix an issue in which tsc command is not copying the public directory correctly.
+Backend.
+* nodemon exec was adjusted to get rid of the TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" in development environment.
+* the field 'sales' in ClientAndSaleResBody type was renamed to 'sale', all vue components and api models were updated accordingly.

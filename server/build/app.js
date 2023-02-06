@@ -7,6 +7,7 @@ import express from "express";
 import { Strategy as LocalStrategy } from "passport-local";
 import errorHandler from "./errors/error-handler.js";
 import { fileDirName } from "./utils/utility-functions.js";
+import checkLoggedIn from "./middlewares/check-logged-in.js";
 import { AUTH_OPTIONS, verifyCallback } from "./passport/local.passport.js";
 import { cookieSessionOptions } from "./middlewares/cookie-session.middleware.js";
 import authRouter from "./routes/auth/auth.router.js";
@@ -44,7 +45,7 @@ app.get('/signup', (_, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.use('/auth', authRouter);
-// app.use(checkLoggedIn);
+app.use(checkLoggedIn);
 app.use('/users', usersRouter);
 app.use('/clients', clientsRouter);
 app.get('/*', function (_, res) {

@@ -1,10 +1,10 @@
 <template>
   <router-link
-    class="back-link d-flex align-items-center gap-2 text-decoration-none text-dark-teal"
+    class="back-link d-flex align-items-center gap-2 text-decoration-none text-dark-teal lh-1"
     :to="url"
   >
     <Icon name="backlink" />
-    Regresar a {{ entity }}
+    {{ label }}
   </router-link>
 </template>
 
@@ -17,7 +17,7 @@ export default {
       type: Object,
       required: true,
     },
-    entity: {
+    label: {
       type: String,
       required: true,
     }

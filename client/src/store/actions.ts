@@ -12,10 +12,13 @@ async function signinUser ({ commit }: ActionContext<UserData, UserData>, userCr
     // const res2 = await fetch('https://localhost:3001/auth/signin', {
     //   method: 'post',
     //   body: JSON.stringify({ email, password }),
-    //   credentials: 'include'
+    //   credentials: 'include',
+    //   headers: {
+    //     accept: 'application/json'
+    //   }
     // });
     // console.log(res2);
-    console.log('signin response', res.data);
+    // console.log('signin response', res.data);
     commit('setUserId', res.data.userData._id);
     commit('setUsername', res.data.userData.username);
     commit('setEmail', res.data.userData.email);

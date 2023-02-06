@@ -1,5 +1,5 @@
 <template>
-  <section class="container bg-green p-4">
+  <section class="container bg-green px-4 py-3">
     <div class="d-flex">
       <StatItem icon="total-debt" label="Deuda total" :value="receivables" />
       <StatItem icon="debtor" label="Deudores" :value="debtors" />

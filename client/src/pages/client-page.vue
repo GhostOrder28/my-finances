@@ -1,18 +1,20 @@
 <template>
-  <section class="container d-flex flex-column bg-green p-4 gap-3">
+  <section class="container d-flex flex-column bg-green px-4 py-3 gap-2">
     <BackLink 
-      entity="Clientes"
+      label="Regresar a clientes"
       :url="{ name: 'clients' }"
     /> 
-    <div class="d-flex justify-content-between">
-      <div class="d-flex flex-column gap-2 d-flex flex-column gap-1 flex-grow-1">
+    <div class="row">
+      <div class="col-7 d-flex flex-column gap-1">
         <h1 class="fs-2 fw-bolder text-start m-0">{{ clientData ? clientData.clientName : ''}}</h1>
         <address class="d-flex align-items-center gap-1 fs-6 m-0">
           <Icon name="phone" />
-          <span>{{ clientData ? clientData.contactPhone : '' }}</span>
+          <span v-if="clientData?.contactPhone">{{ clientData.contactPhone }}</span>
         </address>
       </div>
-      <StatItem icon="total-debt" label="Deuda total" :value="clientData ? clientData.currentDebt : 0" />
+      <div class="col-5">
+        <StatItem icon="total-debt" label="Deuda total" :value="clientData ? clientData.currentDebt : 0" />
+      </div>
     </div>
     <div class="d-flex gap-3">
       <EditButton
@@ -34,7 +36,7 @@
       />
     </div>
   </section>
-  <section class="container p-4">
+  <section class="container p-3">
     <table ref="tableRef" class="table w-100 m-0">
       <thead>
         <tr height="50" class="align-middle w-100 d-table">
@@ -188,5 +190,15 @@ export default defineComponent<any, Empty, State, Empty, Methods>({
 }
 .stats-col {
   width: 20%
+}
+
+.flex-container{
+  display: flex;
+  gap: 1rem;
+}
+
+.flex-container > div {
+  flex-grow: 1;
+  flex-basis: 0;
 }
 </style>

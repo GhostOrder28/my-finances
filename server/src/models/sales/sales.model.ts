@@ -42,6 +42,12 @@ function saleDataAggregation (clientId: string, saleId: string) {
         'sales._id': new ObjectId(saleId)
       },
     },
+    {
+      $set: {
+        sale: '$sales',
+        sales: '$$REMOVE'
+      }
+    }
   ]
 };
 
@@ -50,11 +56,11 @@ function getClientDataProjection (clientId: string, saleId: string, projection: 
     ...saleDataAggregation(clientId, saleId),
     {
       $addFields: {
-        'sales.clientName': '$clientName',
-        'sales.clientNameDetails': '$clientNameDetails'
+        'sale.clientName': '$clientName',
+        'sale.clientNameDetails': '$clientNameDetails'
       }
     },
-    { $replaceRoot: { newRoot: '$sales' } },
+    { $replaceRoot: { newRoot: '$sale' } },
     { $project: projection }
   ]
 };
@@ -170,9 +176,9 @@ async function getOneSale (clientId: string, saleId: string) {
 
     if (!dbResponse) throw new NotFoundError(`El cliente o la venta no existe.`);
 
-    const parsedItems = dbResponse.sales.items.map(item => ({ ...item, name: strParseOut(item.name) }));
+    const parsedItems = dbResponse.sale.items.map(item => ({ ...item, name: strParseOut(item.name) }));
 
-    dbResponse.sales = { ...dbResponse.sales, items: parsedItems };
+    dbResponse.sale = { ...dbResponse.sale, items: parsedItems };
     dbResponse.clientName = strParseOut(dbResponse.clientName);
     dbResponse.clientNameDetails = strParseOut(dbResponse.clientNameDetails);
 

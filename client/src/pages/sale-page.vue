@@ -1,54 +1,54 @@
 <template>
-  <section class="container d-flex flex-column gap-3 bg-green px-3 py-4">
-    <div class="d-flex justify-content-between">
-      <div>
+  <section class="container d-flex flex-column gap-3 bg-green px-4 py-3">
+    <div class="d-flex justify-content-between gap-2">
+      <div class="d-flex flex-column gap-2 text-start">
         <BackLink
-          :entity="clientData ? clientData.clientName : ''"
+          label="Regresar al cliente"
           :url="{ name: 'client', params: { clientid: $route.params.clientid } }"
         />
-        <h1 class="fs-5 fw-bold m-0">Venta realizada a {{ clientData ? clientData.clientName : '' }}</h1>
+        <h1 class="fs-5 fw-bold m-0">Venta a {{ clientData ? clientData.clientName : '' }}</h1>
+        <time class="fw-bold">realizada el {{ clientData ? clientData.sale.saleDate : '' }}</time>
       </div>
-      <time class="fw-bold">{{ clientData ? clientData.sales.saleDate : '' }}</time>
-    </div>
-    <div class="d-flex gap-3">
-      <EditButton
-        :url="{ 
-          name: 'editsale', 
-          params: { clientid: $route.params.clientid, saleid: $route.params.saleid },
-          query: { clientName: clientData?.clientName, clientNameDetails: clientData?.clientNameDetails }
-        }"
-        :label="true"
-      />
-      <DeleteButton 
-        deleteEvent="deleteSaleIntent" 
-        @deleteSaleIntent="declareSaleDeletionIntent"
-        :label="true"
-      />
+      <div class="d-flex flex-column gap-2">
+        <EditButton
+          :url="{ 
+            name: 'editsale', 
+            params: { clientid: $route.params.clientid, saleid: $route.params.saleid },
+            query: { clientName: clientData?.clientName, clientNameDetails: clientData?.clientNameDetails }
+          }"
+          :label="true"
+        />
+        <DeleteButton 
+          deleteEvent="deleteSaleIntent" 
+          @deleteSaleIntent="declareSaleDeletionIntent"
+          :label="true"
+        />
+      </div>
     </div>
     <div class="d-flex">
-      <StatItem icon="total-value" label="Valor total" :value="clientData ? clientData.sales.saleValue : NaN" />
-      <StatItem icon="amount-paid" label="Monto pagado" :value="clientData ? clientData.sales.paidAmount : NaN" />
-      <StatItem icon="debt" label="Deuda" :value="clientData ? clientData.sales.unpaidAmount : NaN" />
+      <StatItem icon="total-value" label="Valor total" :value="clientData ? clientData.sale.saleValue : NaN" />
+      <StatItem icon="amount-paid" label="Monto pagado" :value="clientData ? clientData.sale.paidAmount : NaN" />
+      <StatItem icon="debt" label="Deuda" :value="clientData ? clientData.sale.unpaidAmount : NaN" />
     </div>
   </section>
   <section class="container p-0">
     <div class="w-100 d-flex">
       <button 
         name="products" 
-        :class="`flex-grow-1 w-50 border-0 fs-4 fw-bold ${ currentView === 'products' ? 'bg-dark-blue' : 'bg-blue' } text-light-purple py-2`"
+        :class="`flex-grow-1 w-50 border-0 fs-6 fw-bold ${ currentView === 'products' ? 'bg-dark-blue' : 'bg-blue' } text-light-purple py-2`"
         @click="changeView"
       >
         PRODUCTOS
       </button>
       <button 
         name="payments" 
-        :class="`flex-grow-1 w-50 border-0 fs-4 fw-bold ${ currentView === 'payments' ? 'bg-dark-blue' : 'bg-blue' } text-light-purple py-2`"
+        :class="`flex-grow-1 w-50 border-0 fs-6 fw-bold ${ currentView === 'payments' ? 'bg-dark-blue' : 'bg-blue' } text-light-purple py-2`"
         @click="changeView"
       >
         PAGOS
       </button>
     </div>
-    <div class="p-4">
+    <div class="p-3">
       <table class="table table-fixed w-100 m-0 overflow-hidden" ref='tableRef'>
         <thead 
           v-if="currentView === 'products'"
@@ -78,7 +78,7 @@
           class="d-block w-100 table-group-divider pb-5 overflow-scroll"
         >
           <tr
-            v-for="(item, idx) in clientData.sales.items"
+            v-for="(item, idx) in clientData.sale.items"
             :key="'item' + idx"
             class="d-table w-100 align-middle"
           >
@@ -95,7 +95,7 @@
           class="d-block w-100 table-group-divider pb-5 overflow-y-scroll"
         >
           <tr
-            v-for="(payment, idx) in clientData.sales.payments"
+            v-for="(payment, idx) in clientData.sale.payments"
             :key="'item' + idx"
             :class="`position-relative d-table w-100 align-middle ${toggleSelectedRow(idx)}`"
             @pointerdown="startLongPress(idx)"
@@ -202,8 +202,8 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
         const res = await http.get<{ saleData: ClientAndSaleResBody }>(`/clients/${clientid}/sales/${saleid}`)
         // console.log('res', res.data.saleData);
         const parsedRes = { ...res.data.saleData }
-        parsedRes.sales.saleDate = format(new Date(parsedRes.sales.saleDate), 'dd-MM-yyyy')
-        parsedRes.sales.payments = parsedRes.sales.payments.map(payment => ({
+        parsedRes.sale.saleDate = format(new Date(parsedRes.sale.saleDate), 'dd-MM-yyyy')
+        parsedRes.sale.payments = parsedRes.sale.payments.map(payment => ({
           ...payment, 
           paymentDate: format(new Date(payment.paymentDate), 'dd-MM-yyyy') 
         }))
@@ -250,11 +250,11 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
       const res = await http.patch<{ affectedSaleFields: SaleAfterPayment }>(`/clients/${clientid}/sales/${saleid}/payments/${paymentId}?delete=true`)
 
       if (this.clientData) { // for some reason the type predicate is not working as expected here
-        this.clientData.sales.payments = this.clientData.sales.payments.filter((payment) => {
+        this.clientData.sale.payments = this.clientData.sale.payments.filter((payment) => {
           return payment._id !== paymentId;
         })
-        this.clientData.sales.unpaidAmount = res.data.affectedSaleFields.unpaidAmount
-        this.clientData.sales.paidAmount = res.data.affectedSaleFields.paidAmount
+        this.clientData.sale.unpaidAmount = res.data.affectedSaleFields.unpaidAmount
+        this.clientData.sale.paidAmount = res.data.affectedSaleFields.paidAmount
       }
       this.displayPaymentDeletionConfirmation = false
       this.paymentToDelete = undefined

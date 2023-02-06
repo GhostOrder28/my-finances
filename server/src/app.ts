@@ -54,7 +54,7 @@ app.get('/signup', (_, res: Response) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.use('/auth', authRouter);
-// app.use(checkLoggedIn);
+app.use(checkLoggedIn);
 
 app.use('/users', usersRouter);
 app.use('/clients', clientsRouter);

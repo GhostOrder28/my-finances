@@ -388,3 +388,46 @@ When I resize the viewport horizontally and then refresh the page (F5) sometimes
 
 * In the cases when this scroll appears the `table offset top` is 78 pixels lesser than what it usually is (222 vs 144) and 78 happen to be the navigation bar height, so it seems that sometimes the `navigation.vue` component takes a little bit more to load than the `client-page.vue` component and I assume the same is going to happen fo the other pages.
 
+## Cannot request to local server from android.
+
+I'm developing a Vue-cli + Node (express) application, Vue-cli is running on port 8080 and my node server in port 3001, both on localhost.
+
+When I test my app in my desktop it works just as expected, I can navigate the entire app without issues, the problem appears when I test it on android, for all request the frontend does to the backend I get this error whether using fetch or axios:
+
+```
+<whatever rest verb> https://localhost:3001/<whatever endpoint> net::ERR_CONNECTION_REFUSED 
+```
+
+My axios instance:
+
+```lang-js
+const options = {
+  baseURL: 'https://localhost:3001',
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+}
+
+const http = axios.create(options);
+```
+
+An example for the calls I'm performing:
+
+```lang-js
+await http.get('/test');
+```
+
+And this is the relevant node server configuration:
+
+```lang-js
+const corsOptions = {
+  origin: 'https://<my local ip>:8080',
+  credentials: true,
+};
+app.use(cors(corsOptions)); // <-- this is located before any other express middleware
+```
+I'm setting credentials in both part because I'm using passportjs and cookie-session to handle login, but this issue is present even in a simple GET request, also I already tried without setting credentials but the issue persists.
+
+* Axios version 1.2.1
+* cors middleware version 2.8.5

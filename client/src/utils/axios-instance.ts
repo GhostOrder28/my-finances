@@ -3,8 +3,8 @@ import store from '../store/index';
 import router from "@/router";
 
 const options = {
-  // baseURL: 'https://localhost:3001',
-  baseURL: '/',
+  baseURL: 'https://localhost:3001',
+  // baseURL: '/',
   withCredentials: true,
   // headers: {
   //   'Content-Type': 'application/json'
@@ -14,6 +14,15 @@ const options = {
 const http = axios.create(options);
 
 // http.defaults.responseType = 'json';
+// http.interceptors.request.use(
+//   function (request) {
+//     console.log('successful request', request);
+//     return request;
+//   },
+//   function (error) {
+//     return Promise.reject(error);
+//   }
+// )
 
 http.interceptors.response.use(
   function (response) {

@@ -1,10 +1,12 @@
 <template>
   <button 
-    class="d-flex gap-2 align-items-center fs-6 btn rounded-pill bg-red"
+    class="link-custom d-flex gap-2 align-items-center btn rounded-pill bg-red"
     type="button"
     @click="$emit(deleteEvent)"
   >
-    {{ label ? 'Eliminar' : '' }}
+    <span>
+      {{ label ? 'Eliminar' : '' }}
+    </span>
     <Icon name="thrash" />
   </button>
 </template>
@@ -29,3 +31,9 @@ export default defineComponent({
   }
 })
 </script>
+
+<style>
+.link-custom {
+  font-size: .85rem;
+}
+</style>
