@@ -38,7 +38,6 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.get('/signin', (_, res) => {
-    console.log(`/signin endpoint reached, sending ${path.join(__dirname, "public", "index.html")} file`);
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.get('/signup', (_, res) => {
