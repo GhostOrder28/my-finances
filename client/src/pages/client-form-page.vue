@@ -92,21 +92,27 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
         }
       }
     },
-    async getClientData () {
-      try {
-        const res = await http.get(`/clients/${this.$route.params.clientid}?single=true`)
-        const { sales, ...clientData } = res.data.clientData
-        this.formState = clientData
-      } catch (err) {
-        if (isAxiosError(err)) {
-          this.formErrors = err.response?.data
-        }
+    getClientData () {
+      const { clientName, clientNameDetails, contactPhone } = this.$route.query;
+      this.formState = { 
+        clientName: String(clientName), 
+        clientNameDetails: String(clientNameDetails), 
+        contactPhone: String(contactPhone)
       }
+      // try {
+      //   const res = await http.get(`/clients/${this.$route.params.clientid}?single=true`)
+      //   const { sales, ...clientData } = res.data.clientData
+      //   this.formState = clientData
+      // } catch (err) {
+      //   if (isAxiosError(err)) {
+      //     this.formErrors = err.response?.data
+      //   }
+      // }
     }
   },
   async beforeMount () {
-    if (this.$route.params.clientid) {
-      await this.getClientData()
+    if (this.$route.name === 'editclient') {
+      this.getClientData()
     }
   },
   mounted () {

@@ -11,7 +11,7 @@ type State = {
 
 type Methods = {
   handleSubmit: () => Promise<void>;
-  getClientData: () => Promise<void>;
+  getClientData: () => void;
 }
 
 type Refs = {

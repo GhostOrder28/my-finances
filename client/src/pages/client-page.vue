@@ -19,6 +19,11 @@
         :url="{ 
           name: 'editclient', 
           params: { clientid: $route.params.clientid },
+          query: {
+            clientName: clientData?.clientName, 
+            clientNameDetails: clientData?.clientNameDetails,
+            contactPhone: clientData?.contactPhone
+          }
         }"
         :label="true"
       />
