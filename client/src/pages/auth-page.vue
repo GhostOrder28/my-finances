@@ -32,7 +32,7 @@
           single
           @formSubmit="handleSubmit"
         />
-        <button type="button" @click="handleTest">Test</button>
+        <!-- <button type="button" @click="handleTest">Test</button> -->
       </form>
     </div>
   </div>
