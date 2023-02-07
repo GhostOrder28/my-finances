@@ -17,6 +17,7 @@ async function verifyCallback (username: string, password: string, done: DoneCal
   try {
     console.log('checking if user exists');
     const user = await signin(username);
+    console.log(`user is ${user}`);
 
     // if (!user) return done(null, false, { message: 'this is an error message' }); // what is the purpose of this? I though it was so passport redirects the user to the 'failureRedirect' route but it is redirecting to the 'successRedirect' route
     
@@ -26,6 +27,7 @@ async function verifyCallback (username: string, password: string, done: DoneCal
       const match = await bcrypt.compare(password, user.password);
       if (!match) throw new AuthenticationError('Contraseña incorrecta o el usuario no existe');
     } else {
+      console.log('authentication error throwed!');
       throw new AuthenticationError('Contraseña incorrecta o el usuario no existe');
     };
 

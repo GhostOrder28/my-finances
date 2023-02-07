@@ -432,78 +432,9 @@ I'm setting credentials in both part because I'm using passportjs and cookie-ses
 * Axios version 1.2.1
 * cors middleware version 2.8.5
 
+### Posible solution.
+
+Change the `baseUrl` in `axios-instance.ts` from `localhost` to the local ip, but this is a partial solution because although with this change the browser in mobile makes the requests as expected, the desktop browsers now doesn't return a response.
+
 ## Browser is not saving the cookie sent by Node.
-
-The following settings work on:
-* localhost (only desktop, android gives `net::ERR_CONNECTION_REFUSED`).
-
-Vue(port 8080):
-```lang-js
-// axios instance
-
-const http = axios.create({
-  baseURL: 'https://localhost:3001',
-  withCredentials: true,
-})
-```
-
-Node(port 3001):
-
-```lang-js
-// cookie-session options
-const cookieSessionOptions = {
-  name: 'session',
-  sameSite: 'none',
-  secure: true,
-  maxAge: 24 * 60 * 60 * 1000,
-  keys: [ key1, key2 ]
-}
-```
-
-The following settings work on:
-* localhost (including android).
-* production (not chrome, it doesn't save the cookies sent by the server)
-
-Frontend:
-```lang-js
-// axios instance
-
-const http = axios.create({
-  baseURL: '/',
-  withCredentials: true,
-})
-```
-
-Backend(Node):
-
-```lang-js
-// cookie-session options
-const cookieSessionOptions = {
-  name: 'session',
-  sameSite: 'none',
-  secure: true,
-  maxAge: 24 * 60 * 60 * 1000,
-```
-
-The following settings work on:
-* localhost (including android).
-* production (not chrome, it doesn't save the cookies sent by the server)
-
-Frontend:
-```lang-js
-// axios instance
-
-const http = axios.create({
-  baseURL: '/',
-  withCredentials: true,
-})
-```
-
-Backend(Node):
-
-```lang-js
-// cookie-session options
-const cookieSessionOptions = {
-  name: 'session',
-  maxAge: 24 * 60 * 60 * 1000,
-```
+This was a headache but the reason why this was happening was a wrong credentials error that wans't handled properly on the frontend. I registered my account as `test@test.com` but I was trying to logging as `Test@test.com`, this is why this issue only happened in mobile.

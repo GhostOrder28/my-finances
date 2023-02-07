@@ -10,6 +10,7 @@ async function verifyCallback(username, password, done) {
     try {
         console.log('checking if user exists');
         const user = await signin(username);
+        console.log(`user is ${user}`);
         // if (!user) return done(null, false, { message: 'this is an error message' }); // what is the purpose of this? I though it was so passport redirects the user to the 'failureRedirect' route but it is redirecting to the 'successRedirect' route
         if (user) {
             console.log('checking password');
@@ -18,6 +19,7 @@ async function verifyCallback(username, password, done) {
                 throw new AuthenticationError('Contraseña incorrecta o el usuario no existe');
         }
         else {
+            console.log('authentication error throwed!');
             throw new AuthenticationError('Contraseña incorrecta o el usuario no existe');
         }
         ;
