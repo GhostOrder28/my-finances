@@ -20,11 +20,11 @@ import { User } from "./types/user.types.js";
 
 const { __dirname } = fileDirName(import.meta);
 
-const corsOptions = {
-  origin: 'https://192.168.100.3:8080',
-  // origin: 'https://localhost:8080',
-  credentials: true,
-};
+// const corsOptions = {
+//   origin: 'https://192.168.100.3:8080',
+//   // origin: 'https://localhost:8080',
+//   credentials: true,
+// };
 
 const app = express();
 passport.use(new LocalStrategy(AUTH_OPTIONS, verifyCallback));
@@ -39,7 +39,7 @@ passport.deserializeUser<string>((userId, done) => {
 });
 
 app.use(morgan('combined'));
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 app.use(cookieSession(cookieSessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
