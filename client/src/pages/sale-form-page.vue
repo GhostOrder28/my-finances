@@ -22,7 +22,6 @@
         name="date" 
         v-model:value="formState.saleDate"
         :formatter="dateFormat"
-        :calendarClass="['custom-calendar']"
       >
       </date-picker>
     </div>

@@ -1,9 +1,3 @@
-Backend.
-* lower case sanitization for auth models added.
-
-Frontend: fixes and improvements.
-* error handling fixed for auth-page.vue.
-* error messages now are colored in red and its size was reduced.
-* error messages alignment fixed when multiple error messages were displayed in sale-form-page.vue. 
-* auth forms now have a max width.
-* initial payment now is auto highlighted on focus.
+* validation error message added in sale-form-page.vue.
+* navigation menu now auto closes when a link is clicked.
+* navigation menu now doesn't have different color for current page and hovered link.

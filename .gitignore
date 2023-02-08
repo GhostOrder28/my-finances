@@ -27,3 +27,9 @@ pnpm-debug.log*
 commit-msg.md
 doubts.rmd
 /server/src/security
+
+# misc
+
+commit-msg.md
+nohup.out
+*.bkp

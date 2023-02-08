@@ -28,10 +28,10 @@
       <ul class="list-unstyled">
         <li
           v-for="(link, idx) in links"
+          data-bs-dismiss="offcanvas"
           :key="'link' + idx"
           class="fs-3 text-dark-teal"
         >
-          <!-- <router-link to="/">A</router-link> -->
           <router-link
             class="text-decoration-none"
             :to="{ name: link }"
@@ -77,6 +77,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+a, a.router-link-exact-active, a:hover {
+  color: #27373D;
+}
 #navbar {
 
   & > div:first-child {

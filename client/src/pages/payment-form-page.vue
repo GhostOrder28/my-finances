@@ -77,7 +77,8 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
       formState: {
         paymentDate: new Date(),
         amount: NaN,
-      }
+      },
+      formErrors: {},
     }
   },
   components: {
@@ -93,9 +94,7 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
         this.$router.push({ name: 'sale', params: { clientid, saleid } })
       } catch (err) {
         if (isAxiosError(err)) {
-          console.log('AAA');
-          this.formErrors = { amount: 'test' }
-          // this.formErrors = err.response?.data.validationError
+          this.formErrors = err.response?.data.validationError
         }
       }
     },
