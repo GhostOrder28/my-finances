@@ -4,7 +4,7 @@ import userModel from "../users/users.schema.js";
 import { DuplicateEntityError } from "../../errors/db-errors.js";
 async function signup(body) {
     const { username, email, password, hashedPwd } = body;
-    const newUser = new userModel({ username, email, password: hashedPwd });
+    const newUser = new userModel({ username, email: email.toLowerCase(), password: hashedPwd });
     try {
         await newUser.save();
         return {
@@ -23,7 +23,7 @@ async function signup(body) {
 ;
 async function signin(email) {
     try {
-        const userData = await userModel.findOne({ email });
+        const userData = await userModel.findOne({ email: email.toLowerCase() });
         if (userData) {
             return {
                 _id: userData._id,

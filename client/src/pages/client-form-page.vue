@@ -19,26 +19,26 @@
       <div class="d-flex flex-column gap-3 align-items-start">
         <label class="fs-6" for="clientName">Nombre *</label>
         <input class="form-control" v-model="formState.clientName" name="clientName" type="text" placeholder="Nombre del cliente">
-        <label class="fs-6" for="clientName" v-if="formErrors.clientName">{{ formErrors.clientName }}</label>
+        <label class="error-message" for="clientName" v-if="formErrors.clientName">{{ formErrors.clientName }}</label>
       </div>
       <div class="d-flex flex-column gap-3 align-items-start">
         <label class="fs-6" for="clientNameDetails">Detalle del nombre</label>
         <div class="d-flex flex-column gap-2">
           <input class="form-control" v-model="formState.clientNameDetails" name="clientNameDetails" type="text" placeholder="amigo, vecino, etc">
-          <span class="detail-description text-start">Esto es opcional, pero es útil para diferenciar entre dos personas con el mismo nombre.</span>
+          <span class="detail-description text-start opacity-75">Esto es opcional, pero es útil para diferenciar entre dos personas con el mismo nombre.</span>
         </div>
-        <label class="fs-6" for="clientNameDetails" v-if="formErrors.clientNameDetails">{{ formErrors.clientNameDetails }}</label>
+        <label class="error-message" for="clientNameDetails" v-if="formErrors.clientNameDetails">{{ formErrors.clientNameDetails }}</label>
       </div>
       <div class="d-flex flex-column gap-3 align-items-start">
         <label class="fs-6" for="contactPhone">Número de contacto</label>
         <input class="form-control" v-model="formState.contactPhone" name="contactPhone" type="text" placeholder="Número para contactar al cliente">
-        <label class="fs-6" for="contactPhone" v-if="formErrors.contactPhone">{{ formErrors.contactPhone }}</label>
+        <label class="error-message" for="contactPhone" v-if="formErrors.contactPhone">{{ formErrors.contactPhone }}</label>
       </div>
     </form>
 
     <FormButtons 
       ref="actionsRef"
-      :confirmLabel="$route.name === 'newclient' ? 'Añadir client' : 'Confirmar'"
+      :confirmLabel="$route.name === 'newclient' ? 'Añadir cliente' : 'Confirmar'"
       @formSubmit="handleSubmit"
       cancelLabel="Cancelar"
     />

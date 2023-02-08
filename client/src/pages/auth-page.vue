@@ -1,9 +1,9 @@
 <template>
   <div class="container d-flex align-items-center justify-content-center vh-100" id="page-container">
-    <div>
-      <h1 class="fs-3">{{ $route.name === 'signin' ? 'Ingresar' : 'Registro' }}</h1>
-      <h3>{{ $store.state.errors.authorizationError }}</h3>
-      <h3>{{ $store.state.errors.authenticationError }}</h3>
+    <div class="custom-container">
+      <h1 class="custom-text fs-3 fw-bolde text-uppercase">{{ $route.name === 'signin' ? 'Ingresar' : 'Registro' }}</h1>
+      <h3 class="fs-6 text-red text-start">{{ $store.state.errors.authorizationError }}</h3>
+      <h3 class="fs-6 text-red text-start">{{ $store.state.errors.authenticationError }}</h3>
       <form 
         class="d-flex flex-column gap-4 w-100"
         @submit.prevent="handleSubmit"
@@ -11,19 +11,19 @@
         <div class="d-flex flex-column gap-3 align-items-start" v-if="$route.path === '/signup'">
           <label for="username">Nombre</label>
           <input class="form-control" v-model="username" name="username" type="text" placeholder="Tu nombre">
-          <label for="username">{{ $store.state.errors.username }}</label>
+          <label class="error-message" for="username">{{ $store.state.errors.username }}</label>
         </div>
 
         <div class="d-flex flex-column gap-3 align-items-start">
           <label for="email">Email</label>
           <input class="form-control" v-model="email" name="email" type="text" placeholder="Correo electrónico">
-          <label for="email">{{ $store.state.errors.email }}</label>
+          <label class="error-message" for="email">{{ $store.state.errors.email }}</label>
         </div>
 
         <div class="d-flex flex-column gap-3 align-items-start">
-          <label  for="password">Contraseña</label>
+          <label for="password">Contraseña</label>
           <input class="form-control" v-model="password" name="password" type="password" placeholder="Password">
-          <label for="password">{{ $store.state.errors.password }}</label>
+          <label class="error-message" for="password">{{ $store.state.errors.password }}</label>
         </div>
 
         <FormButtons 
@@ -32,6 +32,7 @@
           single
           @formSubmit="handleSubmit"
         />
+        <!-- <button>Ingresar como invitado</button> -->
         <!-- <button type="button" @click="handleTest">Test</button> -->
       </form>
     </div>
@@ -69,11 +70,9 @@ export default {
           })
         }
 
-        console.log('signed in!');
         this.$router.push({ path: '/clients' })
       } catch (err) {
         console.error(err)
-        // console.error('Necesitas llenar todos los campos requeridos.');
       }
     },
     async handleTest () {
@@ -88,7 +87,13 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.custom-container {
+  width: 13rem;
+}
+.custom-text {
+  letter-spacing: .1em;
+}
 #page-container::before {
   content: "";
   width: 100%;

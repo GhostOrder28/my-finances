@@ -8,7 +8,7 @@ import { SignupData } from "../../types/auth.types.js";
 
 async function signup (body: SignupData) {
   const { username, email, password, hashedPwd } = body;
-  const newUser = new userModel({ username, email, password: hashedPwd });
+  const newUser = new userModel({ username, email: email.toLowerCase(), password: hashedPwd });
 
   try {
     await newUser.save();
@@ -26,7 +26,7 @@ async function signup (body: SignupData) {
 
 async function signin (email: string) {
   try {
-    const userData = await userModel.findOne({ email });
+    const userData = await userModel.findOne({ email: email.toLowerCase() });
     if (userData) {
       return {
         _id: userData._id,

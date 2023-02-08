@@ -22,14 +22,21 @@
         name="date" 
         v-model:value="formState.saleDate"
         :formatter="dateFormat"
+        :calendarClass="['custom-calendar']"
       >
       </date-picker>
     </div>
 
     <div v-if="$route.name === 'newsale'" class="d-flex flex-column align-items-start gap-3">
       <h2 class="fs-6 m-0"><label for="initialPayment">Pago inicial</label></h2>
-      <input class="form-control" type="number" v-model="initialPayment" name="initialPayment">
-      <label for="initialPayment">{{ formErrors ? formErrors.payments : '' }}</label>
+      <input 
+          class="form-control" 
+          type="number" 
+          v-model="initialPayment" 
+          name="initialPayment"
+          @focus="($event.target as HTMLInputElement).select()"
+        >
+      <label class="error-message" for="initialPayment">{{ formErrors ? formErrors.payments : '' }}</label>
     </div>
 
     <div 
@@ -74,10 +81,10 @@
             <Icon name="cross" />
           </button>
         </div>
-        <div class="errorMessages">
-          <label for="name" v-if="formErrors && formErrors[`name${idx}`]">{{ formErrors[`name${idx}`] }}</label>
-          <label for="quantity" v-if="formErrors && formErrors[`quantity${idx}`]">{{ formErrors[`quantity${idx}`] }}</label>
-          <label for="pricePerUnit" v-if="formErrors && formErrors[`pricePerUnit${idx}`]">{{ formErrors[`pricePerUnit${idx}`] }}</label>
+        <div class="d-flex flex-column align-items-start mt-1">
+          <label class="error-message" for="name" v-if="formErrors && formErrors[`name${idx}`]">{{ formErrors[`name${idx}`] }}</label>
+          <label class="error-message" for="quantity" v-if="formErrors && formErrors[`quantity${idx}`]">{{ formErrors[`quantity${idx}`] }}</label>
+          <label class="error-message" for="pricePerUnit" v-if="formErrors && formErrors[`pricePerUnit${idx}`]">{{ formErrors[`pricePerUnit${idx}`] }}</label>
         </div>
       </div>
     </div>

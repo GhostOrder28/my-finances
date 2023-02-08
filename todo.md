@@ -22,6 +22,12 @@ body {
 * When I resize the viewport horizontally and then refresh the page (F5) sometimes a verticall scroll appears along with the vertical scroll from the `tbody`, in these cases the `table offset top` is 78 pixels lesser than what it usually is (222 vs 144) and 78 happen to be the navigation bar height, so it seems that sometimes the `navigation.vue` component takes a little bit more to load than the `client-page.vue` component and I assume the same is going to happen fo the other pages.
 * it would be cool to implement a real-time calculation of the total sale value as the user adds products to the form.
 
+* implement validate message for payments
+* date picker should be bigger and not trigger the screen keyboard in mobile.
+* 'enter' button on mobile should send the forms.
+* create the guest data.
+
+
 ## Api integration.
 
 | Page        | Create | Read | Update | Delete |

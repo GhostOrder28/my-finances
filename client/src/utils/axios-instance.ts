@@ -3,8 +3,8 @@ import store from '../store/index';
 import router from "@/router";
 
 const options = {
-  // baseURL: 'https://localhost:3001',
-  baseURL: '/',
+  baseURL: 'https://localhost:3001',
+  // baseURL: '/',
   withCredentials: true,
   // headers: {
   //   'Content-Type': 'application/json'

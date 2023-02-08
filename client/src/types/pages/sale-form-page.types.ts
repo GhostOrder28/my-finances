@@ -5,12 +5,13 @@ import {
 } from "#backend/sale.types";
 import SaleFormPage from '@/pages/sale-form-page.vue'
 
+import { FormErrors } from "../global.types";
+
 type Refs = {
   itemsRef: HTMLElement;
   actionsRef: typeof SaleFormPage;
 }
 
-type FormErrors = { [key: string]: string }
 
 type State = {
   itemsContainerHeight: number;

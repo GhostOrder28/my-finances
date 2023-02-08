@@ -436,5 +436,28 @@ I'm setting credentials in both part because I'm using passportjs and cookie-ses
 
 Change the `baseUrl` in `axios-instance.ts` from `localhost` to the local ip, but this is a partial solution because although with this change the browser in mobile makes the requests as expected, the desktop browsers now doesn't return a response.
 
-## Browser is not saving the cookie sent by Node.
+## Browser is not saving the cookies sent by Node.
 This was a headache but the reason why this was happening was a wrong credentials error that wans't handled properly on the frontend. I registered my account as `test@test.com` but I was trying to logging as `Test@test.com`, this is why this issue only happened in mobile.
+
+### The backend part of the flow.
+1. User sends the authentication data to the `/auth/signin` endpoint.
+2. The `passport.authenticate` middleware is called.
+3. The verifyCallback is triggered and it checks first for the existence of the username in the database.
+  1. If the username exists then it proceeds to compare the passwords with the hashed one.
+  2. If the username doesn't exists an `AuthenticationError` is throwed, which is handled by express sending a 401 json response with a message.
+
+### The frontend part o the flow.
+4. On the frontend, the user start sending the authentication data through an async function called `handleSubmit`, inside this function:
+  1. The `signinUser` action is dispatched inside a try/catch block in turn perform a post request to the server.
+    1. If the request succeed then the response data (_id, username and email) is commited to the store state.
+    2. If the request fails then I get the authenticationError or validationError from the 401 response and commit the corresponding message to the vuex store.
+  2. A new route is pushed to the history.
+
+So as we can see the bakend is doing its part just fine and the frontend too, or is it? Well not exactly, the `signinUser` action is catching is own errors just fine, but it is not telling that there is an error to `handleSubmit` and therefore after `signinUser` execution is completed `handleSubmit` continues to the next line which is the `router.$push` one, and this is the root of the issue.
+
+When I was trying to log in with `Test@test.com` the `verifyCallback` throws an `AuthenticationError` that is handled correctly by `signinUser` but not by `handleSubmit`, this is confusing enough but troubleshooting was a headache because I wans't considering the differente between `Test` and `test`, as I mentioned this is why this issue appeared always in my android phone, oh and I have to add one more piece to this case, and it is the weird behaviour from the browsers even on desktop, because sometimes the user data was correct and still the cookie wasn't set, this last issue disappeared when I started to clean the cache before trying to login again.
+
+So tu sum up, the causes were:
+* Forgetting about the default capitalization in mobile devices.
+* Incomplete error handling on the frontend part, `signinUser` was doing its job but `handleSubmit` not.
+* Not cleaning the browser cache (only for the url of my project) before testing the login again and again.

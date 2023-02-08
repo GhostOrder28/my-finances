@@ -1,5 +1,6 @@
 import { PaymentPostReqBody, PaymentPatchReqBody, PaymentEditionData } from "#backend/payment.types"
 import FormButtons from '@/components/form-buttons.vue'
+import { FormErrors } from "../global.types"
 
 type State = {
   formState: PaymentPostReqBody | PaymentPatchReqBody | PaymentEditionData;
@@ -8,6 +9,7 @@ type State = {
   saleDate: string;
   unpaidAmount: number;
   formHeight: number;
+  formErrors?: FormErrors;
 }
 
 type Methods = {

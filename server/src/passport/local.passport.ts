@@ -25,10 +25,10 @@ async function verifyCallback (username: string, password: string, done: DoneCal
       console.log('checking password');
 
       const match = await bcrypt.compare(password, user.password);
-      if (!match) throw new AuthenticationError('Contraseña incorrecta o el usuario no existe');
+      if (!match) throw new AuthenticationError('La contraseña es incorrecta o el usuario no existe');
     } else {
       console.log('authentication error throwed!');
-      throw new AuthenticationError('Contraseña incorrecta o el usuario no existe');
+      throw new AuthenticationError('La contraseña es incorrecta o el usuario no existe');
     };
 
     console.log('credentials are correct');

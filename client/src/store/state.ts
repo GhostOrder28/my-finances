@@ -1,6 +1,6 @@
 export const initialState = {
   _id: '',
-  username: 'test',
+  username: '',
   email: '',
   errors: {},
 }

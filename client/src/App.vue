@@ -10,6 +10,7 @@ import "./assets/css/fonts.css"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap.js"
 import "./assets/css/bootstrap-extended.scss"
+import "./assets/css/global-styles.scss"
 
 export default {
   components: { 

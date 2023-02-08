@@ -31,9 +31,12 @@
 
       <div class="d-flex flex-column align-items-start gap-3">
         <h2 class="fs-6 m-0"><label for="amountPaid">Monto del pago *</label></h2>
-        <div class="input-group">
-          <span class="input-group-text">S/</span>
-          <input class="form-control" name="amountPaid" type="number" step="0.01" v-model="formState.amount">
+        <div class="w-100 d-flex flex-column align-items-start">
+          <div class="input-group">
+            <span class="input-group-text">S/</span>
+            <input class="form-control" name="amountPaid" type="number" step="0.01" v-model="formState.amount">
+          </div>
+          <label class="error-message mt-1" for="amountPaid" v-if="formErrors">{{ formErrors.amount }}</label>
         </div>
         <span class="">Actualmente su deuda es de S/ {{ unpaidAmount }}</span>
       </div>
@@ -61,6 +64,7 @@ import FormButtons from '@/components/form-buttons.vue'
 import DatePicker from 'vue-datepicker-next'
 import 'vue-datepicker-next/index.css';
 import http from '@/utils/axios-instance';
+import { isAxiosError } from 'axios';
 
 export default defineComponent<Empty, Empty, State, Empty, Methods>({
   data () {
@@ -83,10 +87,17 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
   },
   methods: {
     async handleSubmit () {
-      const { clientid, saleid } = this.$route.params;
-      console.log(JSON.stringify(this.formState, null, 2))
-      await http.patch(`/clients/${clientid}/sales/${saleid}/payments`, this.formState)
-      this.$router.push({ name: 'sale', params: { clientid, saleid } })
+      try {
+        const { clientid, saleid } = this.$route.params;
+        await http.patch(`/clients/${clientid}/sales/${saleid}/payments`, this.formState)
+        this.$router.push({ name: 'sale', params: { clientid, saleid } })
+      } catch (err) {
+        if (isAxiosError(err)) {
+          console.log('AAA');
+          this.formErrors = { amount: 'test' }
+          // this.formErrors = err.response?.data.validationError
+        }
+      }
     },
     async getPaymentData () {
       const { params: { clientid, saleid, paymentid }, name } = this.$route;

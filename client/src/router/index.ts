@@ -83,9 +83,14 @@ const router = createRouter({
 // router.beforeEach(function (to, from, next) {
 //   const { path } = to;
 //   if (path === '/signin' || path === '/signup') {
-//     store.state.email.length ? next(from.path) : next()
+//     console.log('A');
+//     console.log(from.path);
+//     if (store.state.email.length) next('/clients');
+//     // if (store.state.email.length) next(from.path);
+//     // store.state.email.length ? next(from.path) : next()
 //     return;
 //   } else {
+//     console.log('B');
 //     store.state.email.length ? next() : next('/signin')
 //     return;
 //   }
