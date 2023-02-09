@@ -3,11 +3,19 @@ import { getGuestAuthData } from "../../guest/guest-data.js";
 import { patchUserAssets } from "../../models/users/users.model.js";
 const clientPool = [
     'Luke Skywalker',
+    'Sarah Gomez',
     'Jim Raynor',
     'Jhon Galt',
+    'Camilo',
     'Mara Slania',
+    'Mauricio Flores',
     'Sarah Kerrigan',
-    'Alayna'
+    'Alayna',
+    'Jhon Doe',
+    'Elisa Ibañes',
+    'Malena Lupita',
+    'Tito Livio',
+    'Jorge Cedrón'
 ];
 async function httpSignupGuest(req, res, next) {
     try {

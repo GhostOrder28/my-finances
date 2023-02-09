@@ -58,6 +58,7 @@
       </form>
     </div>
   </div>
+  <Spinner v-if="isLoading" msg="Generando usuario de invitado..." />
 </template>
 
 <script>
@@ -65,6 +66,7 @@ import { mapActions } from 'vuex'
 import FormButtons from '@/components/form-buttons.vue'
 import CustomButton from '@/components/custom-button.vue'
 import http from '@/utils/axios-instance'
+import Spinner from '@/components/spinner.vue'
 
 export default {
   data () {
@@ -72,11 +74,13 @@ export default {
       username: '',
       email: '',
       password: '',
+      isLoading: false
     }
   },
   methods: {    
     async handleSubmit () {
       try {
+        this.isLoading = true
         if (this.$route.path === '/signup') {
           await this.signupUser({
             username: this.username,
@@ -92,19 +96,28 @@ export default {
           })
         }
 
+        this.isLoading = false
         this.$router.push({ path: '/clients' })
       } catch (err) {
         console.error(err)
       }
     },
     async handleGuestRequest () {
-      await this.requestGuest()
-      this.$router.push({ path: '/clients' })
+      try {
+        this.isLoading = true
+        await this.requestGuest()
+        this.isLoading = false
+
+        this.$router.push({ path: '/clients' })
+      } catch (err) {
+        throw new Error(`there was an error while trying to create a guest user, ${err}`)
+      }
     },
     ...mapActions([ 'signinUser', 'signupUser', 'signoutUser', 'requestGuest' ]),
   },
   components: {
     CustomButton,
+    Spinner,
   }
 }
 </script>

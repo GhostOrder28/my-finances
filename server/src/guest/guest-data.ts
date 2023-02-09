@@ -11,14 +11,6 @@ function generateRandomNumber () {
   return Math.floor(Math.random() * 1000);
 };
 
-const clientPool = [
-  'Luke Skywalker',
-  'Jim Raynor',
-  'Jhon Galt',
-  'Mara Slania',
-  'Sarah Kerrigan',
-  'Alayna'
-];
 export {
   getGuestAuthData
 }
