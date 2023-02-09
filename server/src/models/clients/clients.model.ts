@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-import usersSchema from "../users/users.schema.js";
+import usersCollection from "../users/users.schema.js";
 import clientsCollection from "./clients.schema.js";
 import { NotFoundError } from "../../errors/db-errors.js";
 import { patchUserAssets } from "../users/users.model.js";
@@ -124,7 +124,7 @@ async function deleteOneClient (userId: string, clientId: string) {
         }
       }];
 
-      await usersSchema.findOneAndUpdate(query, update);
+      await usersCollection.findOneAndUpdate(query, update);
     };
 
     await patchUserAssets(userId);

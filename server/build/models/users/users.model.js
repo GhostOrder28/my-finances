@@ -66,7 +66,6 @@ async function patchUserAssets(data) {
                     $unset: ['_id']
                 }
             ]).exec();
-            console.log('result: ', userAssets);
             const userQuery = { _id: new ObjectId(userId) };
             const userUpdate = {
                 $set: {
@@ -77,7 +76,7 @@ async function patchUserAssets(data) {
             };
             const userOptions = { new: true };
             const updatedUser = await usersCollection.findOneAndUpdate(userQuery, userUpdate, userOptions);
-            console.log('updatedUser: ', updatedUser);
+            // console.log('updatedUser: ', updatedUser);
         }
         catch (err) {
             throw new Error(`there was an error: ${err}`);

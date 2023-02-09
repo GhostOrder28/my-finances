@@ -461,3 +461,23 @@ So tu sum up, the causes were:
 * Forgetting about the default capitalization in mobile devices.
 * Incomplete error handling on the frontend part, `signinUser` was doing its job but `handleSubmit` not.
 * Not cleaning the browser cache (only for the url of my project) before testing the login again and again.
+
+## Guest user requests doesn't pass the checkLoggedIn check.
+To troubleshoot this I decided to test the auth flow from the user input until the signin call only, this was a bad idea because this way the user never signs out.
+
+#### Testing signin, without pushing new route (this was a bad idea).
+1. User sends the auth data for the first time.
+2. Passport checks if there is a cookie, if there is then it deserialize it and set the resulting value to `req.user`.
+3. The `httpSignin` controller is called and because `req.user` is not set it just call the validators.
+4. The `passport.authenticate` middleware is fired.
+  1. Checks for the existence of the user, if the user doesn't exist it throws an `AuthenticationError`
+  2. Compare passwords with bcrypt (this step is omitted if the user is a guest).
+  3. Call the `done` callback passing the user data it got from step 1.1.
+  4. `req.user` now is set and contains the user data just passed in the last step.
+  5. The `httpSignin` controller is called a second time and because `req.user` is set it responds to the client with that data (removing the password first).
+5. The `serializeUser` method is called and it serializes the user `_id` which is inside `req.user`.
+* If a user signs in but doesn't signs out then the cookie for this first user is never cleared, therefore if a second user tries to sign in this is going to create a confusion because the cookie for the first user is going to be send along with the sign in request for the second user and because of this passport will detect the cookie and deserialize it, consecuently `req.user` is never undefined so the first time `httpSignin` is called (step 3) it will inmediatly take the `req.user` value (which is the deserialized cookie, that is the user `_id`) and perform step 4.5. This will result in a really weird response.
+
+#### Request for clients is being called before the siginin one (the real issue).
+* This happens only for the guest user.
+* The solution was to simply await for the dispatch call, but then why is that the dispatch call from the `signupUser` action never cause this 'race condition'?

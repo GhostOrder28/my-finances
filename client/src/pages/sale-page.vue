@@ -112,6 +112,7 @@
                   params: { clientid: $route.params.clientid, saleid: $route.params.saleid, paymentid: payment._id },
                   query: { clientName: clientData?.clientName, clientNameDetails: clientData?.clientNameDetails }
                 }"
+                :label="false"
               />
               <DeleteButton 
                 deleteEvent="deletePaymentIntent"
@@ -152,6 +153,7 @@
       query: { clientName: clientData?.clientName, clientNameDetails: clientData?.clientNameDetails }
     }"
   />
+  <Spinner v-if="isLoading" />
 </template>
 
 <script lang="ts">
@@ -170,6 +172,7 @@ import BackLink from '@/components/back-link.vue'
 import { ClientAndSaleResBody } from '#backend/sale.types'
 import Modal from '@/components/modal.vue'
 import { SaleAfterPayment } from '#backend/sale.types'
+import Spinner from '@/components/spinner.vue'
 
 export default defineComponent<Empty, Empty, State, Empty, Methods>({
   data () {
@@ -182,6 +185,7 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
       currentView: 'products',
       tbodyHeight: 0,
       actionPanel: undefined,
+      isLoading: false
     }
   },
   components: {
@@ -191,6 +195,7 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
     DeleteButton,
     BackLink,
     Modal,
+    Spinner,
   },
   methods: {
     changeView (e: MouseEvent) {
@@ -198,6 +203,7 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
     },
     async getSaleData () {
       try {
+        this.isLoading = true
         const { clientid, saleid } = this.$route.params;
         const res = await http.get<{ saleData: ClientAndSaleResBody }>(`/clients/${clientid}/sales/${saleid}`)
         // console.log('res', res.data.saleData);
@@ -211,6 +217,7 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
         // console.log('parsed res', parsedRes)
 
         this.clientData = parsedRes
+        this.isLoading = false
       } catch (err) {
         if (isAxiosError(err)) {
           console.error(err.response)

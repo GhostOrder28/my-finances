@@ -9,6 +9,7 @@ type User = {
   receivables: number;
   debtors: number;
   creationDate: Date;
+  guest?: boolean;
 }
 
 type UserAssets = Pick<User, 'debtors' | 'receivables' | 'totalSalesValue'>

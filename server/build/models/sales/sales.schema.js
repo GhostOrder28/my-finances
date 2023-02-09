@@ -14,7 +14,7 @@ const itemsSchema = new Schema({
         type: Number,
         required: true,
     },
-});
+}, { _id: false });
 const salesSchema = new Schema({
     saleDate: {
         type: String,

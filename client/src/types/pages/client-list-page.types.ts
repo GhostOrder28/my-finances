@@ -5,6 +5,7 @@ type State = {
   debtors: number;
   clientList: ClientListItem[];
   tbodyHeight: number;
+  isLoading: boolean;
 }
 
 type Methods = {

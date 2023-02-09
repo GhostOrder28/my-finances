@@ -33,5 +33,10 @@ const userSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    guest: {
+        type: Boolean,
+        required: false,
+    }
 });
-export default mongoose.model('User', userSchema);
+const usersCollection = mongoose.model('User', userSchema);
+export default usersCollection;

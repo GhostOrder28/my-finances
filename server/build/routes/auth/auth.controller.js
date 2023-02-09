@@ -20,7 +20,8 @@ async function httpSignup(req, res, next) {
     }
 }
 async function httpSignin(req, res, next) {
-    console.log(req.body);
+    console.log('req.body: ', req.body);
+    console.log('req.user: ', req.user);
     try {
         if (req.user) {
             console.log('req.user is defined, responding to the client...');

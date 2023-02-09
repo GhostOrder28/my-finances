@@ -32,6 +32,7 @@
     </table>
   </section>
   <PopupButton label="Añadir cliente" :url="{ name: 'newclient' }" />
+  <Spinner v-if="isLoading" />
 </template>
 
 <script lang="ts">
@@ -44,6 +45,7 @@ import { defineComponent } from 'vue'
 import { State, Methods, Refs } from '@/types/pages/client-list-page.types'
 import { Empty } from '@/types/global.types'
 import { UserAssets } from '#backend/user.types'
+import Spinner from '@/components/spinner.vue'
 
 // mocks
 export default defineComponent<Empty, Empty, State, Empty, Methods>({
@@ -53,18 +55,20 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
       debtors: 0,
       clientList: [],
       tbodyHeight: 0,
+      isLoading: false,
     }
   },
   methods: {
     async getClients () {
       try {
+        this.isLoading = true
         const clientListRes = await http.get<{ clientList: ClientListItem[] }>(`/clients/${this.$store.state._id}`);
         const userAssetsRes = await http.get<{ userAssets: UserAssets }>(`/users/${this.$store.state._id}`);
 
-        console.log('server response: ', clientListRes.data.clientList);
         this.clientList = clientListRes.data.clientList
         this.receivables = userAssetsRes.data.userAssets.receivables
         this.debtors = userAssetsRes.data.userAssets.debtors
+        this.isLoading = false
       } catch (err) {
         console.error(err);
       }
@@ -72,7 +76,8 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
   },
   components: {
     StatItem,
-    PopupButton
+    PopupButton,
+    Spinner,
   },
   async beforeMount () {
     await this.getClients()

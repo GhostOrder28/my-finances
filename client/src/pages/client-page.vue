@@ -101,6 +101,7 @@
     }"
   />
 
+  <Spinner v-if="isLoading" />
 </template>
 
 <script lang='ts'>
@@ -118,6 +119,7 @@ import DeleteButton from '@/components/delete-button.vue'
 import { format } from 'date-fns'
 import Modal from '@/components/modal.vue'
 import { ClientResBody } from '#backend/client.types'
+import Spinner from '@/components/spinner.vue'
 
 export default defineComponent<any, Empty, State, Empty, Methods>({
   // for some Reason if I pass Props to the first parameter in defineComponent typescript thinks 'props' is undefined, so for now I will let it as any.
@@ -126,19 +128,21 @@ export default defineComponent<any, Empty, State, Empty, Methods>({
     return {
       displayClientDeletionConfirmation: false,
       clientData: undefined, // I've tried adding a type predicate to {} | ClientResponse so I can initialize this prop as an empty object instead of undefined but for some reason type  predicates doesn't work on Vue
-      tbodyHeight: 0
+      tbodyHeight: 0,
+      isLoading: false,
     }
   },
   methods: {
     async getClientData () {
       try {
+        this.isLoading = true
         const res = await http.get<{ clientData: ClientResBody }>(`/clients/${this.$route.params.clientid}?single=true`)
         const parsedSales = res.data.clientData.sales.map(sale => ({
           ...sale,
           saleDate: format(new Date(sale.saleDate), 'dd-MM-yyyy') 
         }))
-        console.log('parsed res', parsedSales)
 
+        this.isLoading = false
         this.clientData = { ...res.data.clientData, sales: parsedSales }
       } catch (err) {
         console.error(err)
@@ -167,6 +171,7 @@ export default defineComponent<any, Empty, State, Empty, Methods>({
     EditButton,
     DeleteButton,
     Modal,
+    Spinner,
   },
   watch: {
     displayClientDeletionConfirmation (newVal) {

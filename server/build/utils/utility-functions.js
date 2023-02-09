@@ -30,6 +30,10 @@ const capFirst = (str) => {
         return null;
     }
 };
+function getRandomNumber(limit) {
+    return Math.floor(Math.random() * limit);
+}
+;
 function groupValidationErrors(errors) {
     const itemErrors = [];
     const nonItemErrors = [];
@@ -80,4 +84,4 @@ function getValidationErrorMessages(errors, isArray) {
     return parsedErrorMessages;
 }
 ;
-export { qsToBool, strParseOut, strParseIn, getValidationErrorMessages, groupValidationErrors, fileDirName, };
+export { qsToBool, strParseOut, strParseIn, getValidationErrorMessages, groupValidationErrors, fileDirName, getRandomNumber, };

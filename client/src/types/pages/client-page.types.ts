@@ -8,6 +8,7 @@ type State = {
   displayClientDeletionConfirmation: boolean;
   clientData: ClientResBody | undefined;
   tbodyHeight: number;
+  isLoading: boolean;
 }
 
 type Methods = {

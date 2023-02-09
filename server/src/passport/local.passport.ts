@@ -15,23 +15,21 @@ const AUTH_OPTIONS = {
 
 async function verifyCallback (username: string, password: string, done: DoneCallback){
   try {
-    console.log('checking if user exists');
     const user = await signin(username);
-    console.log(`user is ${user}`);
 
     // if (!user) return done(null, false, { message: 'this is an error message' }); // what is the purpose of this? I though it was so passport redirects the user to the 'failureRedirect' route but it is redirecting to the 'successRedirect' route
     
     if (user) {
-      console.log('checking password');
-
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) throw new AuthenticationError('La contraseña es incorrecta o el usuario no existe');
+      if (!user.username.includes('guest')) {
+        console.log('checking password');
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) throw new AuthenticationError('La contraseña es incorrecta o el usuario no existe');
+      };
     } else {
-      console.log('authentication error throwed!');
       throw new AuthenticationError('La contraseña es incorrecta o el usuario no existe');
     };
 
-    console.log('credentials are correct');
+    console.log('calling done with user:', user);
     return done(null, user);
   } catch (err) {
     if (err instanceof ValidationError) return done(err);

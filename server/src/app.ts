@@ -15,6 +15,7 @@ import { cookieSessionOptions } from "./middlewares/cookie-session.middleware.js
 import authRouter from "./routes/auth/auth.router.js"; 
 import usersRouter from "./routes/users/users.router.js";
 import clientsRouter from "./routes/clients/clients.router.js";
+import guestsRouter from "./routes/guests/guests.router.js";
 
 import { User } from "./types/user.types.js";
 
@@ -53,10 +54,12 @@ app.get('/signup', (_, res: Response) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.use('/auth', authRouter);
+app.use('/guests', guestsRouter);
 app.use(checkLoggedIn);
 
 app.use('/users', usersRouter);
 app.use('/clients', clientsRouter);
+
 app.get('/*', function (_, res: Response) { 
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });

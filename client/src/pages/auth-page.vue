@@ -26,14 +26,35 @@
           <label class="error-message" for="password">{{ $store.state.errors.password }}</label>
         </div>
 
-        <FormButtons 
-          :confirmLabel="$route.name === 'signin' ? 'Ingresar' : 'Confirmar Registro'"
-          cancelLabel="Cancelar"
-          single
+        <CustomButton 
+          :label="$route.name === 'signin' ? 'Ingresar' : 'Registrarse'"
           @formSubmit="handleSubmit"
         />
-        <!-- <button>Ingresar como invitado</button> -->
-        <!-- <button type="button" @click="handleTest">Test</button> -->
+
+        <CustomButton 
+          v-if="$route.name === 'signin'"
+          label="Registrarse"
+          customStyle="bg-green text-dark-teal"
+          link
+          :url="{ name: 'signup' }"
+        />
+
+        <CustomButton 
+          v-if="$route.name === 'signup'"
+          label="Ya tengo una cuenta"
+          customStyle="bg-green text-dark-teal"
+          link
+          :url="{ name: 'signin' }"
+        />
+
+        <CustomButton 
+          v-if="$route.name === 'signin'"
+          label="Ingresar como invitado"
+          customStyle="bg-yellow text-dark-teal"
+          event="guest"
+          @guest="handleGuestRequest"
+        />
+
       </form>
     </div>
   </div>
@@ -42,6 +63,7 @@
 <script>
 import { mapActions } from 'vuex'
 import FormButtons from '@/components/form-buttons.vue'
+import CustomButton from '@/components/custom-button.vue'
 import http from '@/utils/axios-instance'
 
 export default {
@@ -56,7 +78,7 @@ export default {
     async handleSubmit () {
       try {
         if (this.$route.path === '/signup') {
-          await this.$store.dispatch('signupUser', {
+          await this.signupUser({
             username: this.username,
             email: this.email,
             password: this.password,
@@ -64,7 +86,7 @@ export default {
         }
 
         if (this.$route.path === '/signin') {
-          await this.$store.dispatch('signinUser', {
+          await this.signinUser({
             email: this.email,
             password: this.password,
           })
@@ -75,14 +97,14 @@ export default {
         console.error(err)
       }
     },
-    async handleTest () {
-      const res = await http.get('/test');
-      console.log('res', res.data);
+    async handleGuestRequest () {
+      await this.requestGuest()
+      this.$router.push({ path: '/clients' })
     },
-    ...mapActions([ 'signinUser', 'signupUser', 'signoutUser' ]),
+    ...mapActions([ 'signinUser', 'signupUser', 'signoutUser', 'requestGuest' ]),
   },
   components: {
-    FormButtons
+    CustomButton,
   }
 }
 </script>

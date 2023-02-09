@@ -10,6 +10,7 @@ type State = {
   currentView: string;
   tbodyHeight: number;
   actionPanel: number | undefined;
+  isLoading: boolean;
 }
 
 type Methods = {

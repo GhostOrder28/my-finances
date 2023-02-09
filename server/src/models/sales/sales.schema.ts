@@ -19,7 +19,7 @@ const itemsSchema = new Schema<Item>({
     type: Number,
     required: true,
   },
-});
+}, { _id: false });
 
 const salesSchema = new Schema<Sale>({
   saleDate: {

@@ -24,7 +24,8 @@ async function httpSignup (req: Request<any, any, SignupData>, res: Response, ne
 }
 
 async function httpSignin (req: Request<any, any, UserCredentials>, res: Response, next: NextFunction) {
-  console.log(req.body);
+  console.log('req.body: ', req.body);
+  console.log('req.user: ', req.user);
   try {
     if (req.user) {
       console.log('req.user is defined, responding to the client...');

@@ -7,12 +7,15 @@ import { UserCredentials, SignupData } from '#backend/auth.types'
 import http from '@/utils/axios-instance';
 
 async function signinUser ({ commit }: ActionContext<UserData, UserData>, userCredentials: UserCredentials) {
+  console.log('signin user...');
   try {
     const { email, password } = userCredentials;
     const res = await http.post<{ userData: UserData }>('/auth/signin', { email, password });
+    console.log('user data from signin', res.data.userData);
     commit('setUserId', res.data.userData._id);
     commit('setUsername', res.data.userData.username);
     commit('setEmail', res.data.userData.email);
+    console.log('signed user, store state: ', store.state);
   } catch (err) {
     if (isAxiosError(err)) {
       if (err.response) {
@@ -35,7 +38,8 @@ async function signupUser ({ commit }: ActionContext<UserData, UserData>, signup
   try {
     const { username, email, password } = signupData;
     const res = await http.post<{ userCredentials: UserCredentials }>('/auth/signup', { username, email, password });
-    store.dispatch('signinUser', {
+    // why this dispatch never caused a race condition before without awaiting for it?
+    await store.dispatch('signinUser', {
       email: res.data.userCredentials.email,
       password: res.data.userCredentials.password,
     })
@@ -54,8 +58,22 @@ async function signoutUser ({ commit }: { commit: Commit }) {
   commit('resetState');
 }
 
+async function requestGuest () {
+  try {
+    const res = await http.get('/guests')
+    console.log('new user credentials', res.data.userCredentials);
+    await store.dispatch('signinUser', {
+      email: res.data.userCredentials.email,
+      password: res.data.userCredentials.password,
+    })
+  } catch (err) {
+    throw new Error(`there was an error trying to generate a guest, ${err}`)
+  }
+}
+
 export {
   signinUser,
   signupUser,
   signoutUser,
+  requestGuest,
 }

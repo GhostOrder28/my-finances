@@ -69,8 +69,6 @@ async function patchUserAssets (data: ChangeStreamDocument<Client> | string) {
         }
       ]).exec();
 
-      console.log('result: ', userAssets);
-
       const userQuery = { _id: new ObjectId(userId) };
       const userUpdate = {
         $set: {
@@ -82,7 +80,7 @@ async function patchUserAssets (data: ChangeStreamDocument<Client> | string) {
       const userOptions = { new: true };
       const updatedUser = await usersCollection.findOneAndUpdate(userQuery, userUpdate, userOptions);
 
-      console.log('updatedUser: ', updatedUser);
+      // console.log('updatedUser: ', updatedUser);
     } catch (err) {
       throw new Error(`there was an error: ${err}`)
     }

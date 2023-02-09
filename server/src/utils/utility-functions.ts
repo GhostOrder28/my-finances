@@ -34,6 +34,10 @@ const capFirst = (str: string) => {
   }
 }
 
+function getRandomNumber (limit: number) {
+  return Math.floor(Math.random() * limit);
+};
+
 function groupValidationErrors (errors: ValidationError) {
   const itemErrors: ValidationErrorItem[] = [];
   const nonItemErrors: ValidationErrorItem[] = [];
@@ -91,4 +95,5 @@ export {
   getValidationErrorMessages,
   groupValidationErrors,
   fileDirName,
+  getRandomNumber,
 }
