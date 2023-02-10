@@ -4,7 +4,8 @@ import router from "@/router";
 
 const options = {
   // baseURL: 'https://localhost:3001',
-  baseURL: '/',
+  baseURL: 'https://192.168.100.3:3001',
+  // baseURL: '/',
   withCredentials: true,
   // headers: {
   //   'Content-Type': 'application/json'

@@ -5,7 +5,7 @@
       <h3 class="fs-6 text-red text-start">{{ $store.state.errors.authorizationError }}</h3>
       <h3 class="fs-6 text-red text-start">{{ $store.state.errors.authenticationError }}</h3>
       <form 
-        class="d-flex flex-column gap-4 w-100"
+        class="d-flex flex-column gap-2 w-100"
         @submit.prevent="handleSubmit"
       >
         <div class="d-flex flex-column gap-3 align-items-start" v-if="$route.path === '/signup'">
@@ -20,40 +20,42 @@
           <label class="error-message" for="email">{{ $store.state.errors.email }}</label>
         </div>
 
-        <div class="d-flex flex-column gap-3 align-items-start">
+        <div class="d-flex flex-column gap-2 align-items-start">
           <label for="password">Contraseña</label>
           <input class="form-control" v-model="password" name="password" type="password" placeholder="Password">
           <label class="error-message" for="password">{{ $store.state.errors.password }}</label>
         </div>
 
-        <CustomButton 
-          :label="$route.name === 'signin' ? 'Ingresar' : 'Registrarse'"
-          @formSubmit="handleSubmit"
-        />
+        <div class="d-flex flex-column gap-3 mt-3">
+          <CustomButton 
+            :label="$route.name === 'signin' ? 'Ingresar' : 'Registrarse'"
+            @formSubmit="handleSubmit"
+          />
 
-        <CustomButton 
-          v-if="$route.name === 'signin'"
-          label="Registrarse"
-          customStyle="bg-green text-dark-teal"
-          link
-          :url="{ name: 'signup' }"
-        />
+          <CustomButton 
+            v-if="$route.name === 'signin'"
+            label="Registrarse"
+            customStyle="bg-green text-dark-teal"
+            link
+            :url="{ name: 'signup' }"
+          />
 
-        <CustomButton 
-          v-if="$route.name === 'signup'"
-          label="Ya tengo una cuenta"
-          customStyle="bg-green text-dark-teal"
-          link
-          :url="{ name: 'signin' }"
-        />
+          <CustomButton 
+            v-if="$route.name === 'signup'"
+            label="Ya tengo una cuenta"
+            customStyle="bg-green text-dark-teal"
+            link
+            :url="{ name: 'signin' }"
+          />
 
-        <CustomButton 
-          v-if="$route.name === 'signin'"
-          label="Ingresar como invitado"
-          customStyle="bg-yellow text-dark-teal"
-          event="guest"
-          @guest="handleGuestRequest"
-        />
+          <CustomButton 
+            v-if="$route.name === 'signin'"
+            label="Ingresar como invitado"
+            customStyle="bg-yellow text-dark-teal"
+            event="guest"
+            @guest="handleGuestRequest"
+          />
+        </div>
 
       </form>
     </div>
@@ -122,6 +124,9 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  margin-top: -2.5rem;
+}
 .custom-container {
   width: 13rem;
 }

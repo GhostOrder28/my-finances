@@ -373,7 +373,7 @@ Well, when you install the `typescript` module so you can leverage typescript in
 
 Until here I've been always generated build files for the frontend part of my projects(whether it was React or Vue) I knew that you are not supposed to use the frontend part as it is for deployment but you need to generate static files which then will be served through a server(in my case my node server). I've never generated any build files for the backend part, but that was because I never use typescript in Node before, now that I'm using it it is necessary to generate them because of course node itself doesn't understand the `.ts` files, typecript is after all a kind of post processor for javascript.
 
-Finally, after you generate the build files your start script need a little change, in my case it was `node src/server.ts` now it is `node build/server.js`, for more information consult the article I just linked before.
+Finally, after you generate the build files your start script needs a little change, in my case it was `node src/server.ts` now it is `node build/server.js`, for more information consult the article I just linked before.
 
 Now when I tried to start my server from the build directory I started getting `Cannot find module` errors, looking in the web I found that when you are developing a node + typescript project your imports should always specify the extension which should be `.js` and not `.ts`, typescript will resolve the imports properly, I found this info [here](https://gist.github.com/slavafomin/cd7a54035eff5dc1c7c2eff096b23b6b).
 
@@ -401,21 +401,10 @@ When I test my app in my desktop it works just as expected, I can navigate the e
 My axios instance:
 
 ```lang-js
-const options = {
+const http = axios.create({
   baseURL: 'https://localhost:3001',
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-}
-
-const http = axios.create(options);
-```
-
-An example for the calls I'm performing:
-
-```lang-js
-await http.get('/test');
+  withCredentials: true
+});
 ```
 
 And this is the relevant node server configuration:
@@ -427,17 +416,25 @@ const corsOptions = {
 };
 app.use(cors(corsOptions)); // <-- this is located before any other express middleware
 ```
+
 I'm setting credentials in both part because I'm using passportjs and cookie-session to handle login, but this issue is present even in a simple GET request, also I already tried without setting credentials but the issue persists.
 
 * Axios version 1.2.1
 * cors middleware version 2.8.5
 
-### Posible solution.
+### Solution.
 
-Change the `baseUrl` in `axios-instance.ts` from `localhost` to the local ip, but this is a partial solution because although with this change the browser in mobile makes the requests as expected, the desktop browsers now doesn't return a response.
+Change the `baseUrl` in `axios-instance.ts` from `localhost` to the local ip.
+
+```lang-js
+const http = axios.create({
+  baseURL: 'https://<your local ip>:<your port>',
+  withCredentials: true
+});
+```
 
 ## Browser is not saving the cookies sent by Node.
-This was a headache but the reason why this was happening was a wrong credentials error that wans't handled properly on the frontend. I registered my account as `test@test.com` but I was trying to logging as `Test@test.com`, this is why this issue only happened in mobile.
+This was a headache but the main cause was that I wasn't handling the `AuthenticationError` throwed from the backend in the frontend flow properly. I registered my account as `test@test.com` but I was trying to logging as `Test@test.com`, this is why this issue only happened in mobile.
 
 ### The backend part of the flow.
 1. User sends the authentication data to the `/auth/signin` endpoint.
@@ -448,12 +445,12 @@ This was a headache but the reason why this was happening was a wrong credential
 
 ### The frontend part o the flow.
 4. On the frontend, the user start sending the authentication data through an async function called `handleSubmit`, inside this function:
-  1. The `signinUser` action is dispatched inside a try/catch block in turn perform a post request to the server.
+  1. The `signinUser` action is dispatched inside a try/catch block which in turn perform a post request to the server.
     1. If the request succeed then the response data (_id, username and email) is commited to the store state.
     2. If the request fails then I get the authenticationError or validationError from the 401 response and commit the corresponding message to the vuex store.
   2. A new route is pushed to the history.
 
-So as we can see the bakend is doing its part just fine and the frontend too, or is it? Well not exactly, the `signinUser` action is catching is own errors just fine, but it is not telling that there is an error to `handleSubmit` and therefore after `signinUser` execution is completed `handleSubmit` continues to the next line which is the `router.$push` one, and this is the root of the issue.
+So as we can see the backend is doing its part just fine and the frontend too, or is it? Well not exactly, the `signinUser` action is catching its own errors just fine, but it is not telling that there is an error to `handleSubmit` and therefore after `signinUser` execution is completed `handleSubmit` continues to the next line which is the `router.$push` one, and this is the root of the issue.
 
 When I was trying to log in with `Test@test.com` the `verifyCallback` throws an `AuthenticationError` that is handled correctly by `signinUser` but not by `handleSubmit`, this is confusing enough but troubleshooting was a headache because I wans't considering the differente between `Test` and `test`, as I mentioned this is why this issue appeared always in my android phone, oh and I have to add one more piece to this case, and it is the weird behaviour from the browsers even on desktop, because sometimes the user data was correct and still the cookie wasn't set, this last issue disappeared when I started to clean the cache before trying to login again.
 

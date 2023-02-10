@@ -4,6 +4,7 @@
     top-0
     d-flex flex-column justify-content-center align-items-center gap-3
     w-100 vh-100 
+    fs-5 fw-bold
     bg-white 
     opacity-75
   ">
