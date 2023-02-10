@@ -1,7 +1,7 @@
 <template>
   <div class="container d-flex align-items-center justify-content-center vh-100" id="page-container">
     <div class="custom-container">
-      <h1 class="custom-text fs-3 fw-bolde text-uppercase">{{ $route.name === 'signin' ? 'Ingresar' : 'Registro' }}</h1>
+      <h1 class="custom-text mb-4 fs-3 fw-bolder">{{ $route.name === 'signin' ? 'Ingresar' : 'Registro' }}</h1>
       <h3 class="fs-6 text-red text-start">{{ $store.state.errors.authorizationError }}</h3>
       <h3 class="fs-6 text-red text-start">{{ $store.state.errors.authenticationError }}</h3>
       <form 
@@ -80,7 +80,6 @@ export default {
   methods: {    
     async handleSubmit () {
       try {
-        this.isLoading = true
         if (this.$route.path === '/signup') {
           await this.signupUser({
             username: this.username,
@@ -96,7 +95,6 @@ export default {
           })
         }
 
-        this.isLoading = false
         this.$router.push({ path: '/clients' })
       } catch (err) {
         console.error(err)
@@ -110,6 +108,7 @@ export default {
 
         this.$router.push({ path: '/clients' })
       } catch (err) {
+        this.isLoading = false
         throw new Error(`there was an error while trying to create a guest user, ${err}`)
       }
     },
@@ -125,9 +124,6 @@ export default {
 <style scoped>
 .custom-container {
   width: 13rem;
-}
-.custom-text {
-  letter-spacing: .1em;
 }
 #page-container::before {
   content: "";

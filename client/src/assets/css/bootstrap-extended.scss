@@ -16,6 +16,8 @@ $custom-colors: (
   "dark-teal": #27373D,
 );
 
+$font-family-base: Lato;
+
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
 @import "../../../node_modules/bootstrap/scss/bootstrap.scss"

@@ -145,7 +145,8 @@ export default defineComponent<any, Empty, State, Empty, Methods>({
         this.isLoading = false
         this.clientData = { ...res.data.clientData, sales: parsedSales }
       } catch (err) {
-        console.error(err)
+        this.isLoading = false
+        throw new Error(`there was an error while requesting the list of clients, ${err}`)
       }
     },
     async deleteClient () {

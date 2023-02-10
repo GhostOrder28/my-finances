@@ -80,21 +80,23 @@ const router = createRouter({
   routes
 })
 
-// router.beforeEach(function (to, from, next) {
-//   const { path } = to;
-//   if (path === '/signin' || path === '/signup') {
-//     console.log('A');
-//     console.log(from.path);
-//     if (store.state.email.length) next('/clients');
-//     // if (store.state.email.length) next(from.path);
-//     // store.state.email.length ? next(from.path) : next()
-//     return;
-//   } else {
-//     console.log('B');
-//     store.state.email.length ? next() : next('/signin')
-//     return;
-//   }
-//   // next()
-// })
+router.beforeEach(function (to, from, next) {
+  store.commit('setErrors', {})
+  return next()
+  // const { path } = to;
+  // if (path === '/signin' || path === '/signup') {
+  //   console.log('A');
+  //   console.log(from.path);
+  //   if (store.state.email.length) next('/clients');
+  //   // if (store.state.email.length) next(from.path);
+  //   // store.state.email.length ? next(from.path) : next()
+  //   return;
+  // } else {
+  //   console.log('B');
+  //   store.state.email.length ? next() : next('/signin')
+  //   return;
+  // }
+  // next()
+})
 
 export default router

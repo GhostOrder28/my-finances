@@ -20,6 +20,7 @@
 * Implement order for responses.
 * `clientName` and `clientNameDetails` in the patch sale endpoint are not needed anymore.
 * handle duplicate emails.
+* There is a problem with Math.floor in the payment generation for the guest user, need to investigate further.
 
 ## Server side validation []
 * `amount` shoudn't be greater than the saleValue []

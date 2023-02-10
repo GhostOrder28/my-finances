@@ -220,8 +220,11 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
         this.isLoading = false
       } catch (err) {
         if (isAxiosError(err)) {
+          this.isLoading = false
           console.error(err.response)
+          throw new Error(`there was an error when requesting the sale data, ${err.response}`)
         } else {
+          this.isLoading = false
           throw new Error(`there was an error, ${err}`)
         }
       }
