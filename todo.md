@@ -1,3 +1,6 @@
+# General.
+* create release tag before doing any changes.
+
 # Frontend.
 * add edition and deletion buttons.
 * add sass to the project so I can use variables and implement the color change for the tabs in the sale page.
@@ -13,6 +16,7 @@
 * 'enter' button on mobile should send the forms.
 * add custom font.
 * if there is more than 3 products in a sale then in the client page every sale should display only 3 of them.
+* lazy load for components.
 
 # Backend.
 * Right now the watcher for `clients` re-calculates the sum of `clientSalesValue` and `currentDebt` fields for every update operation performed, but ideally this re-calculation should occur only if the updated data is related to money in some sense, e.g. an update on the sale date shoudn't trigger this re-calculation.
