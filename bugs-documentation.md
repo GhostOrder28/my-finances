@@ -1,13 +1,13 @@
-# Backend.
+## Backend.
 
-## TypeError [ERR_INVALID_ARG_TYPE]: The "listener" argument must be of type function. Received undefined.
+### TypeError [ERR_INVALID_ARG_TYPE]: The "listener" argument must be of type function. Received undefined.
 This error indicates that the callback passed to the `on` Method is returning undefined:
 ```
 clientsCollection.watch([], { fullDocument: 'updateLookup' }).on('change', < listener callback >)
 ```
 Strangely enough the fix is to include the function (the listener) right inside the `on` statement and not as an imported function.
 
-## Weird response when an empty url param is sent with the request from the client.
+### Weird response when an empty url param is sent with the request from the client.
 
 I'm building a Vue + Node app, I already generated the build files using VueCli and served them from my Node server, but Node also is in charge of my api so I ended up with this code in Node:
 
@@ -63,7 +63,7 @@ But what happens if I make a request to `<host>/test/` instead? Well the request
 
 This not only happens when I make the request from the browser but also on postman. 
 
-### But why this happens?
+#### But why this happens?
 At the start I was so confused because the response was not an error but a successful one, however the log inside the `/test/:someid` endpoint was not being printed on the console, but (through a lot of troubleshooting) I decided to comment out the wildcard enpoint and to my surprise the html message above was still being sent, so thanks to this I realized what the true issue was.
 This html template error was being sent because the `/test/` endpoint is of course not the same as `/test/:someid` or to be more precise `/test/15` express differentiate between them so the `/test/:someid` endpoint was not the one that was being called but the wildcard one which precisely returns that html template.
 
@@ -73,7 +73,7 @@ And the answer that I dare to give is that that html template actually is always
 
 That file is not an error is actually the container for the whole Vue app, is just that in this case (the axios get request) I wasn't rendering the response in the viewport, which is what happens when I request a route from the browser url bar itself, what I was doing in fact was storing the raw template and logging it (as plain text), and this is why this was a successful response with this 'weird' html template.
 
-## Typing serializeUser and deserializeUser from passportjs.
+### Typing serializeUser and deserializeUser from passportjs.
 
 I'm implementing a basic local authentication flow with passportjs and cookie-session middlewares in my node server.
 
@@ -178,7 +178,7 @@ function httpSignin (req: Request<any, any, UserCredentials>, res: Response, nex
 
 But I would like to avoid type casting if possible.
 
-## XML Parsing Error: syntax error when sending a request with a body with empty properties to the server.
+### XML Parsing Error: syntax error when sending a request with a body with empty properties to the server.
 
 When I send a request like this:
 
@@ -199,13 +199,13 @@ Line Number 1, Column 1:
 
 I stop getting this error if I remove the `passport.authenticate('local')` middleware in the router.
 
-### Solution.
+#### Solution.
 
 Passportjs cannot receive empty fields (username and password) so the solution is to validate the user input before calling the `passport.authenticate('local')` middleware.
 
-# Frontend.
+## Frontend.
 
-## Vuex store is not update at the moment route.beforeEach checks it.
+### Vuex store is not update at the moment route.beforeEach checks it.
 The login flow starts when the user clicks the login button and `handleSubmit` mehotd is called, it is as follows:
 1. `signinUser` action is dispatched from the store.
   1. A request to the `/signin` endpoint is made.
@@ -220,11 +220,11 @@ The login flow starts when the user clicks the login button and `handleSubmit` m
 
 The issue was that at the moment `beforeEach` was triggered the vuex store was not updated yet, this is because actions are asynchronous.
 
-### Solution.
+#### Solution.
 
 Await for the dispatched actions in `handleSubmit`, and also because of that make it an async function too.
 
-## Axios interceptors only work in the root route.
+### Axios interceptors only work in the root route.
 I have a basic login handled with passportjs and cookie-session for cookies, after the user is logged in I set a cookie with the user id which is then serialized and sent to the frontend along with the response.
 
 After that for every request the user makes to my api I first check if that user (identified by that cookie) is logged in using the `req.isAuthenticated` method from passportjs. If there is no cookie or it has been tampered then I throw an error that is handled by express which in turn sends a 401 response to the client.
@@ -250,8 +250,8 @@ However for some reason this interceptor only works if the client made the reque
 
 I think the reason is that once the `checkLoggedIn` middleware fails to check the login it throws an Error, consecuently express omit all the next middlewares and one of those middlewares is the wildcard one which is the one that handles all the routes from the app, and this is why the client only gets a message as a response, that is the json formatted message that the servr is sending, it is not sending `index.js`. This however doesn't explain why express is sending `index.js` correctly when the request in made from the root route.
 
-## Passportjs isAuthenticated method returns false in chrome.
-### Solution.
+### Passportjs isAuthenticated method returns false in chrome.
+#### Solution.
 Set `sameSite` options to none in `cookieSessionOptions`:
 ```lang-js
 const cookieSessionOptions = {
@@ -259,7 +259,7 @@ const cookieSessionOptions = {
 }
 ```
 
-## Deployment.
+### Deployment.
 I've been working on a vue-cli + node project using typescript in both of them and now I want to deploy it, so I generated the build files with the help of vue-cli and served them with my node server, until here all was good, my node server serves the static files generated by vue-cli just fine and I can navigate my app without issues. But I was running my server always with nodemon, now that I want to deploy it I know I first need to check if my server runs fine with the `node` command instead of `nodemon`.
 
 And so here comes the issues, when I run `node <path to my server.ts file>` command I get the following error:
@@ -362,11 +362,11 @@ And this is my **package.json** relevant part:
 }
 ```
 
-### Possible solution.
+#### Possible solution.
 
 So, consulting [this node + typescript setup article again](https://khalilstemmler.com/blogs/typescript/node-starter-project/), I now know that you are not supposed to deploy the `.ts` files nor any thing typescript related. The reason was obvious (or well maybe not) typescript is relevant only in the developer environment.
 
-#### Converting a typescript project to vanilla JS.
+##### Converting a typescript project to vanilla JS.
 So the files for deployment should be the vanilla `.js` ones, but how can I convert all my project which is full of `.ts` files to vanila js?
 
 Well, when you install the `typescript` module so you can leverage typescript in node it comes with a utility command called `tsc` (the typescript compiler) which will do that work for you, but before that you need to add `"outDir": "build"` options in `tsconfig.json` this will tell typescript where to put the build files (the vanilla javacript version of your project).
@@ -377,18 +377,16 @@ Finally, after you generate the build files your start script needs a little cha
 
 Now when I tried to start my server from the build directory I started getting `Cannot find module` errors, looking in the web I found that when you are developing a node + typescript project your imports should always specify the extension which should be `.js` and not `.ts`, typescript will resolve the imports properly, I found this info [here](https://gist.github.com/slavafomin/cd7a54035eff5dc1c7c2eff096b23b6b).
 
-# Frontend.
+### Vertical scroll appearing randomly in pages. 
 
-## Vertical scroll appearing randomly in pages. 
-
-### The issue.
+#### The issue.
 When I resize the viewport horizontally and then refresh the page (F5) sometimes a verticall scroll appears along with the vertical scroll from the `tbody`.
 
-### Debugging.
+#### Debugging.
 
 * In the cases when this scroll appears the `table offset top` is 78 pixels lesser than what it usually is (222 vs 144) and 78 happen to be the navigation bar height, so it seems that sometimes the `navigation.vue` component takes a little bit more to load than the `client-page.vue` component and I assume the same is going to happen fo the other pages.
 
-## Cannot request to local server from android.
+### Cannot request to local server from android.
 
 I'm developing a Vue-cli + Node (express) application, Vue-cli is running on port 8080 and my node server in port 3001, both on localhost.
 
@@ -422,7 +420,7 @@ I'm setting credentials in both part because I'm using passportjs and cookie-ses
 * Axios version 1.2.1
 * cors middleware version 2.8.5
 
-### Solution.
+#### Solution.
 
 Change the `baseUrl` in `axios-instance.ts` from `localhost` to the local ip.
 
@@ -433,17 +431,17 @@ const http = axios.create({
 });
 ```
 
-## Browser is not saving the cookies sent by Node.
+### Browser is not saving the cookies sent by Node.
 This was a headache but the main cause was that I wasn't handling the `AuthenticationError` throwed from the backend in the frontend flow properly. I registered my account as `test@test.com` but I was trying to logging as `Test@test.com`, this is why this issue only happened in mobile.
 
-### The backend part of the flow.
+#### The backend part of the flow.
 1. User sends the authentication data to the `/auth/signin` endpoint.
 2. The `passport.authenticate` middleware is called.
 3. The verifyCallback is triggered and it checks first for the existence of the username in the database.
   1. If the username exists then it proceeds to compare the passwords with the hashed one.
   2. If the username doesn't exists an `AuthenticationError` is throwed, which is handled by express sending a 401 json response with a message.
 
-### The frontend part o the flow.
+#### The frontend part o the flow.
 4. On the frontend, the user start sending the authentication data through an async function called `handleSubmit`, inside this function:
   1. The `signinUser` action is dispatched inside a try/catch block which in turn perform a post request to the server.
     1. If the request succeed then the response data (_id, username and email) is commited to the store state.
@@ -459,10 +457,10 @@ So tu sum up, the causes were:
 * Incomplete error handling on the frontend part, `signinUser` was doing its job but `handleSubmit` not.
 * Not cleaning the browser cache (only for the url of my project) before testing the login again and again.
 
-## Guest user requests doesn't pass the checkLoggedIn check.
+### Guest user requests doesn't pass the checkLoggedIn check.
 To troubleshoot this I decided to test the auth flow from the user input until the signin call only, this was a bad idea because this way the user never signs out.
 
-#### Testing signin, without pushing new route (this was a bad idea).
+##### Testing signin, without pushing new route (this was a bad idea).
 1. User sends the auth data for the first time.
 2. Passport checks if there is a cookie, if there is then it deserialize it and set the resulting value to `req.user`.
 3. The `httpSignin` controller is called and because `req.user` is not set it just call the validators.
@@ -475,6 +473,6 @@ To troubleshoot this I decided to test the auth flow from the user input until t
 5. The `serializeUser` method is called and it serializes the user `_id` which is inside `req.user`.
 * If a user signs in but doesn't signs out then the cookie for this first user is never cleared, therefore if a second user tries to sign in this is going to create a confusion because the cookie for the first user is going to be send along with the sign in request for the second user and because of this passport will detect the cookie and deserialize it, consecuently `req.user` is never undefined so the first time `httpSignin` is called (step 3) it will inmediatly take the `req.user` value (which is the deserialized cookie, that is the user `_id`) and perform step 4.5. This will result in a really weird response.
 
-#### Request for clients is being called before the siginin one (the real issue).
+##### Request for clients is being called before the siginin one (the real issue).
 * This happens only for the guest user.
 * The solution was to simply await for the dispatch call, but then why is that the dispatch call from the `signupUser` action never cause this 'race condition'?

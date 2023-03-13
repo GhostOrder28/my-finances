@@ -1,31 +1,25 @@
 <template>
   <router-link
     class="back-link d-flex align-items-center gap-2 text-decoration-none text-dark-teal lh-1"
-    :to="url"
+    :to="props.url"
   >
     <Icon name="backlink" />
-    {{ label }}
+    {{ props.label }}
   </router-link>
 </template>
 
-<script>
+<script lang='ts' setup>
+import { defineProps } from 'vue'
+import { RouteLocationRaw } from 'vue-router';
 import Icon from '@/components/icon.vue'
 
-export default {
-  props: {
-    url: {
-      type: Object,
-      required: true,
-    },
-    label: {
-      type: String,
-      required: true,
-    }
-  },
-  components: {
-    Icon,
-  }
+type Props = {
+  url: RouteLocationRaw;
+  label: string;
 }
+
+const props = defineProps<Props>();
+
 </script>
 
 <style>

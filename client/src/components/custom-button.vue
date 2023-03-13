@@ -16,32 +16,22 @@
   </router-link>
 </template>
 
-<script>
-export default {
-  props: {
-    label: {
-      type: String,
-      required: true,
-    },
-    event: {
-      type: String,
-      required: false,
-      default: 'formSubmit'
-    },
-    customStyle: {
-      type: String,
-      required: false,
-      default: 'bg-blue text-light-purple'
-    },
-    link: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    url: {
-      type: Object,
-      required: false,
-    }
-  }
+<script lang='ts' setup>
+import { defineProps, withDefaults } from 'vue'
+import { RouteLocationRaw } from 'vue-router';
+
+type Props = {
+  label: string;
+  event: string;
+  customStyle: string;
+  link: boolean;
+  url: RouteLocationRaw;
 }
+
+withDefaults(defineProps<Props>(), {
+  event: 'formSubmit',
+  customStyle: 'bg-blue text-light-purple',
+  link: false,
+  url: '#',
+});
 </script>
