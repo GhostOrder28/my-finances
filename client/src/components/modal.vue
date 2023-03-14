@@ -10,29 +10,16 @@
   </Teleport>
 </template>
 
-<script>
-export default {
-  props: {
-    body: {
-      type: String,
-      required: true,
-    },
-    rejectLabel: {
-      type: String,
-      required: true,
-    },
-    confirmLabel: {
-      type: String,
-      required: true,
-    },
-    confirmEvent: {
-      type: String,
-      required: true,
-    },
-    rejectEvent: {
-      type: String,
-      required: true,
-    }
-  }
+<script setup lang='ts'>
+import { defineProps } from 'vue'
+
+type Props = {
+  body: string;
+  rejectLabel: string;
+  confirmLabel: string;
+  confirmEvent: string;
+  rejectEvent: string;
 }
+
+defineProps<Props>();
 </script>

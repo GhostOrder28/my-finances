@@ -11,25 +11,32 @@
   </button>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import Icon from '@/components/icon.vue'
-import { defineComponent } from 'vue';
+import { defineProps } from 'vue';
 
-export default defineComponent({
-  props: {
-    label: {
-      type: Boolean,
-      required: false,
-    },
-    deleteEvent: {
-      type: String,
-      required: true
-    }
-  },
-  components: {
-    Icon
-  }
-})
+type Props = {
+  label?: boolean,
+  deleteEvent: string,
+}
+
+defineProps<Props>()
+
+// export default defineComponent({
+//   props: {
+//     label: {
+//       type: Boolean,
+//       required: false,
+//     },
+//     deleteEvent: {
+//       type: String,
+//       required: true
+//     }
+//   },
+//   components: {
+//     Icon
+//   }
+// })
 </script>
 
 <style>

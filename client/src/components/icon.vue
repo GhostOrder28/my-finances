@@ -114,10 +114,14 @@
   </svg>
 </template>
 
-<script>
-export default {
-  props: ['name']
+<script setup lang='ts'>
+import { defineProps } from 'vue'
+
+type Props = {
+  name: string;
 }
+
+defineProps<Props>()
 </script>
 
 <style>

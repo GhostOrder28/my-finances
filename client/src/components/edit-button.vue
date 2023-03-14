@@ -10,6 +10,15 @@
 
 <script lang="ts">
 import Icon from '@/components/icon.vue'
+// import { RouteLocationRaw } from 'vue-router';
+// import { defineProps } from 'vue';
+//
+// type Props = {
+//   url: RouteLocationRaw,
+//   label?: boolean,
+// }
+//
+// defineProps<Props>()
 
 export default {
   props: {

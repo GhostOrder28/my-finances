@@ -18,22 +18,16 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    confirmLabel: {
-      type: String,
-      required: true,
-    },
-    cancelLabel: {
-      type: String,
-      required: true,
-    },
-    single: {
-      type: Boolean,
-      default: false,
-      required: false,
-    }
-  },
+<script setup lang='ts'>
+import { defineProps, withDefaults } from 'vue'
+
+type Props = {
+  confirmLabel: string;
+  cancelLabel: string;
+  single: boolean;
 }
+
+withDefaults(defineProps<Props>(), {
+  single: false,
+})
 </script>
