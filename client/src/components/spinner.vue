@@ -13,13 +13,12 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    msg: {
-      type: String,
-      required: false,
-    }
-  }
+<script setup lang='ts'>
+import { defineProps } from 'vue'
+
+type Props = {
+  msg?: string;
 }
+
+defineProps<Props>()
 </script>

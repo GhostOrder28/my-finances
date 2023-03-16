@@ -53,27 +53,20 @@
   </div>
 </template>
 
-<script>
-import Icon from './icon';
-import { mapActions } from 'vuex'
+<script setup lang='ts'>
+import Icon from './icon.vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
-export default {
-  data () {
-    return {
-      links: [ 'home', 'clients' ]
-    }
-  },
-  components: {
-    Icon
-  },
-  methods: {
-    async signOut () {
-      await this.$store.dispatch('signoutUser')
-      this.$router.push({ path: '/signin' })
-    },
-    ...mapActions([ 'signoutUser' ])
-  }
-}
+const store = useStore();
+const router = useRouter();
+
+const links = [ 'home', 'clients' ];
+
+const signOut = async () => {
+  await store.dispatch('signoutUser')
+  router.push({ path: '/signin' })
+};
 </script>
 
 <style lang="scss" scoped>

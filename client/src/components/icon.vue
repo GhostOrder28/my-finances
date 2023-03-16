@@ -116,9 +116,10 @@
 
 <script setup lang='ts'>
 import { defineProps } from 'vue'
+import { Icon } from '../types/global.types';
 
 type Props = {
-  name: string;
+  name: Icon;
 }
 
 defineProps<Props>()

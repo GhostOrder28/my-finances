@@ -8,25 +8,15 @@
 </div>
 </template>
 
-<script>
-import Icon from '@/components/icon'
-export default {
-  props: {
-    icon: {
-      required: true,
-      type: String,
-    },
-    label: {
-      required: true,
-      type: String,
-    },
-    value: {
-      required: true,
-      type: String,
-    }
-  },
-  components: {
-    Icon
-  }
+<script setup lang='ts'>
+import { defineProps } from 'vue'
+import { Icon } from '../types/global.types'
+
+type Props = {
+  icon: Icon;
+  label: string;
+  value: number;
 }
+
+defineProps<Props>()
 </script>

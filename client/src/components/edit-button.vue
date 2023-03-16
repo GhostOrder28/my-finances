@@ -8,33 +8,17 @@
   </router-link>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import Icon from '@/components/icon.vue'
-// import { RouteLocationRaw } from 'vue-router';
-// import { defineProps } from 'vue';
-//
-// type Props = {
-//   url: RouteLocationRaw,
-//   label?: boolean,
-// }
-//
-// defineProps<Props>()
+import { RouteLocationRaw } from 'vue-router';
+import { defineProps } from 'vue';
 
-export default {
-  props: {
-    url: {
-      type: Object,
-      required: true,
-    },
-    label: {
-      type: Boolean,
-      required: false
-    }
-  },
-  components: {
-    Icon
-  },
+type Props = {
+  url: RouteLocationRaw,
+  label?: boolean,
 }
+
+defineProps<Props>()
 </script>
 
 <style>

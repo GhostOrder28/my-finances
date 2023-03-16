@@ -15,23 +15,15 @@
   </router-link>
 </template>
 
-<script lang='ts'>
-import { defineComponent } from 'vue'
+<script setup lang='ts'>
+import { defineProps } from 'vue';
+import { RouteLocationRaw } from 'vue-router';
 import Icon from './icon.vue'
 
-export default defineComponent({
-  props: {
-    label: {
-      type: String,
-      required: true,
-    },
-    url: {
-      type: Object,
-      required: true,
-    }
-  },
-  components: {
-    Icon
-  },
-})
+type Props = {
+  label: string;
+  url: RouteLocationRaw
+}
+
+defineProps<Props>()
 </script>

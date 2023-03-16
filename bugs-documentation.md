@@ -476,3 +476,6 @@ To troubleshoot this I decided to test the auth flow from the user input until t
 ##### Request for clients is being called before the siginin one (the real issue).
 * This happens only for the guest user.
 * The solution was to simply await for the dispatch call, but then why is that the dispatch call from the `signupUser` action never cause this 'race condition'?
+
+##### sfc is undefined.
+The issue was a typo in the script tag definition for the component, they prop `setup` was written as `stup`.
