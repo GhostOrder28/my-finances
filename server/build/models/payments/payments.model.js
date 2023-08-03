@@ -122,7 +122,7 @@ async function patchPayment(clientId, saleId, paymentId, body) {
     const parsedBody = {
         ...body,
         _id: new ObjectId(body._id),
-        paymentDate: format(new Date(body.paymentDate), 'yyyy-MM,dd')
+        paymentDate: format(new Date(body.paymentDate), 'yyyy-MM-dd')
     };
     const query = { _id: new ObjectId(clientId) };
     const update = [

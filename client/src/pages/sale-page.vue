@@ -209,6 +209,7 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
         // console.log('res', res.data.saleData);
         const parsedRes = { ...res.data.saleData }
         parsedRes.sale.saleDate = format(new Date(parsedRes.sale.saleDate), 'dd-MM-yyyy')
+        console.log('parsedRes: ', parsedRes);
         parsedRes.sale.payments = parsedRes.sale.payments.map(payment => ({
           ...payment, 
           paymentDate: format(new Date(payment.paymentDate), 'dd-MM-yyyy') 

@@ -89,8 +89,13 @@ export default defineComponent<Empty, Empty, State, Empty, Methods>({
   methods: {
     async handleSubmit () {
       try {
-        const { clientid, saleid } = this.$route.params;
-        await http.patch(`/clients/${clientid}/sales/${saleid}/payments`, this.formState)
+        const { params: { clientid, saleid, paymentid }, name } = this.$route
+        if (name === 'newpayment') {
+          await http.patch(`/clients/${clientid}/sales/${saleid}/payments`, this.formState)
+        }
+        if (name === 'editpayment' && paymentid) {
+          await http.patch(`/clients/${clientid}/sales/${saleid}/payments/${paymentid}`, this.formState)
+        }
         this.$router.push({ name: 'sale', params: { clientid, saleid } })
       } catch (err) {
         if (isAxiosError(err)) {
