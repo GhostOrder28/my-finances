@@ -13,7 +13,7 @@
     "build-app": "npm run build-client && npm run build-server",
     "start-app": "npm run build-client && npm run start-server",
     "deploy": "npm run build --prefix client & npm run watch-server",
-    "install-deps": "npm install --prefix client & npm install --only=dev --prefix client & npm install --prefix server"
+    "install-deps": "npm install --include=dev --prefix client & npm install --prefix server"
   },
   "author": "",
   "license": "ISC"
