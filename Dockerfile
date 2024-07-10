@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm run install-deps
+RUN NODE_ENV=development npm run install-deps
 RUN npm run build-app
 
 CMD [ "npm", "run", "start-server" ]
