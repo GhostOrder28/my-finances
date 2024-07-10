@@ -12,7 +12,7 @@ const server = http.createServer(app);
 //   cert: readFileSync(`${path.resolve()}/src/security/localhost.crt`),
 //   key: readFileSync(`${path.resolve()}/src/security/localhost.key`),
 // }, app);
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4000;
 async function startServer() {
     await mongoConnect();
     server.listen(PORT, () => { console.log(`listening to port ${PORT}`); });
