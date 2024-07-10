@@ -35,3 +35,6 @@ commit-msg.md
 nohup.out
 *.bkp
 *.drawio
+
+# custom
+./server/src/public
