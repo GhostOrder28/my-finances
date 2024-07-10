@@ -1,2 +1,8 @@
 ./server/src/public
+bugs-documentation.md
+doubts.rmd
+todo.md
+README.md
+design/
+.git/
 
