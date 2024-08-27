@@ -3,7 +3,7 @@ import store from '../store/index';
 import router from "@/router";
 
 const options = {
-  baseURL: '/',
+  baseURL: process.env.VUE_APP_API_BASE_URL || '/',
   withCredentials: true,
 }
 

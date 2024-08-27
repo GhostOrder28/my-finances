@@ -22,7 +22,7 @@ import { User } from "./types/user.types.js";
 const { __dirname } = fileDirName(import.meta);
 
 // const corsOptions = {
-//   origin: 'https://192.168.100.5:8080',
+//   origin: process.env.CLIENT_ORIGIN,
 //   // origin: 'https://localhost:8080',
 //   credentials: true,
 // };
