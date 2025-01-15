@@ -40,7 +40,6 @@ app.use(cors(corsOptions));
 app.use(cookieSession(cookieSessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 app.get('/signin', (_, res: Response) => {
