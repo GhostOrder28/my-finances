@@ -1,4 +1,4 @@
-// import cors from "cors";
+import cors from "cors";
 import path from "path";
 import morgan from "morgan";
 import passport from "passport";
@@ -17,15 +17,11 @@ import usersRouter from "./routes/users/users.router.js";
 import clientsRouter from "./routes/clients/clients.router.js";
 import guestsRouter from "./routes/guests/guests.router.js";
 
+import corsOptions from "./middlewares/cors.middleware.js";
 import { User } from "./types/user.types.js";
 
 const { __dirname } = fileDirName(import.meta);
 
-// const corsOptions = {
-//   origin: process.env.CLIENT_ORIGIN,
-//   // origin: 'https://localhost:8080',
-//   credentials: true,
-// };
 
 const app = express();
 passport.use(new LocalStrategy(AUTH_OPTIONS, verifyCallback));
@@ -40,7 +36,7 @@ passport.deserializeUser<string>((userId, done) => {
 });
 
 app.use(morgan('combined'));
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(cookieSession(cookieSessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
