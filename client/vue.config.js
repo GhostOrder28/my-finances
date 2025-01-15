@@ -4,7 +4,7 @@ const path = require('path')
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: { https: true },
-  outputDir: '../server/src/public',
+  outputDir: './build',
   configureWebpack: {
     resolve: {
       alias: {
