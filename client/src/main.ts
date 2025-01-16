@@ -3,7 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store/index'
 
-// console.log = () => null
+// enable/disable console.log
+console.log = () => null
 
 createApp(App)
   .use(router)
