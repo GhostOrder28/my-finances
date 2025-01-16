@@ -1,19 +1,19 @@
 {
-  "name": "my-finances",
+  "name": "sales-book",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "watch-client": "npm run watch --prefix client",
-    "watch-server": "npm run watch --prefix server",
-    "start-server": "npm run start --prefix server",
-    "watch": "npm run watch-client & npm run watch-server",
+    "watch-api": "npm run watch --prefix api",
+    "start-api": "npm run start --prefix api",
+    "watch": "npm run watch-client & npm run watch-api",
     "build-client": "npm run build --prefix client",
-    "build-server": "npm run build --prefix server",
-    "build-app": "npm run build-client && npm run build-server",
-    "start-app": "npm run build-client && npm run start-server",
-    "deploy": "npm run build --prefix client & npm run watch-server",
-    "install-deps": "npm install --include=dev --prefix client & npm install --include=dev --prefix server"
+    "build-api": "npm run build --prefix api",
+    "build-app": "npm run build-client && npm run build-api",
+    "start-app": "npm run build-client && npm run start-api",
+    "deploy": "npm run build --prefix client & npm run watch-api",
+    "install-deps": "npm install --include=dev --prefix client & npm install --include=dev --prefix api"
   },
   "author": "",
   "license": "ISC"
