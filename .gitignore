@@ -23,12 +23,12 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-# server
+# api
 
-/server/.env
+/api/.env
 commit-msg.md
 doubts.rmd
-/server/src/security
+/api/src/security
 
 # misc
 
@@ -37,6 +37,3 @@ commit-msg.md
 nohup.out
 *.bkp
 *.drawio
-
-# custom
-./server/src/public
