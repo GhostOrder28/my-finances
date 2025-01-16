@@ -14,8 +14,6 @@ function setEmail (state: UserData, email: string) {
 }
 
 function setErrors (state: UserData, errObj: AuthErrors) {
-  console.log('setting erors');
-  console.log(errObj);
   state.errors = errObj
 }
 
