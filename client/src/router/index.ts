@@ -8,10 +8,6 @@ const SaleFormPage = () => import('@/pages/sale-form-page.vue');
 const PaymentFormPage = () => import('@/pages/payment-form-page.vue');
 const AuthPage = () => import('@/pages/auth-page.vue');
 
-// function protectRoute (Component) {
-//   body   
-// };
-
 const routes: Array<RouteRecordRaw> = [
   {
     name: 'home',
@@ -81,22 +77,17 @@ const router = createRouter({
 })
 
 router.beforeEach(function (to, from, next) {
+  if (to.path === "/" && !store.state.email.length) {
+    next("/signin")
+  }
+
+  if ([ "/signin", "/signup" ].includes(to.path) && store.state.email.length) {
+    next(from.path)
+  }
+
   store.commit('setErrors', {})
+
   return next()
-  // const { path } = to;
-  // if (path === '/signin' || path === '/signup') {
-  //   console.log('A');
-  //   console.log(from.path);
-  //   if (store.state.email.length) next('/clients');
-  //   // if (store.state.email.length) next(from.path);
-  //   // store.state.email.length ? next(from.path) : next()
-  //   return;
-  // } else {
-  //   console.log('B');
-  //   store.state.email.length ? next() : next('/signin')
-  //   return;
-  // }
-  // next()
 })
 
 export default router
