@@ -1,6 +1,8 @@
 <template>
   <div id='navbar' class="container d-flex justify-content-between align-items-center px-4 py-3 bg-dark-green">
-    <span class="fs-5 fw-bolder">Mis Finanzas</span>
+    <router-link to="/">
+      <span class="fs-5 fw-bolder">Libro de ventas</span>
+    </router-link>
     <div id='navigation'>
       <Icon name='search' />
       <button 
