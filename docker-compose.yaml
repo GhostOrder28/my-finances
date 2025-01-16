@@ -1,0 +1,86 @@
+name: slb
+
+services:
+  client:
+    build:
+      context: ./client/
+    image: slb-client:prod
+    container_name: slb-client
+    # command: [ 'npm', 'run', 'watch' ]
+    # restart: unless-stopped
+    ports:
+      - 443:443
+      - 3000:3000
+    volumes:
+      - ./client/:/app
+      - caddy_data:/data
+    env_file: ./client/.env
+    networks: 
+      - slb-network
+
+  api:
+    build:
+      context: ./api/
+    image: slb-api:prod
+    container_name: slb-api
+    # command: [ 'npm', 'run', 'watch' ]
+    # restart: unless-stopped
+    ports:
+      - 4000:4000
+    env_file: ./api/.env
+    networks: 
+      - slb-network
+
+  db:
+    image: mongo
+    # container_name: mongoasd
+    ports:
+      - 27017:27017
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    # healthcheck:
+    #   test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'my-replica',members:[{_id:0,host:'host.docker.internal:27017'}]}) }" | mongosh --port 27017 --quiet
+    #   interval: 5s
+    #   timeout: 30s
+    #   start_period: 0s
+    #   start_interval: 1s
+    #   retries: 30
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ghost
+      MONGO_INITDB_ROOT_PASSWORD: testing
+      MONGO_INITDB_DATABASE: mongo
+    # command: ["mongod", "--config", "/etc/mongo/mongod.conf", "--replSet", "my-replica", "--bind_ip_all"]
+    command: ["mongod", "--config", "/etc/mongo/mongod.conf"]
+    volumes:
+      - ./api/src/services/mongo.init.js:/docker-entrypoint-initdb.d/mongo.init.js
+      - ./api/src/services/mongod.conf:/etc/mongo/mongod.conf
+      - ./api/src/security/mongo-keyfile:/etc/mongo-keyfile
+      - db-data:/data/db
+    networks: 
+      - slb-network
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+      # - ME_CONFIG_MONGODB_SERVER=db
+      - ME_CONFIG_MONGODB_URL=mongodb://ghost:testing@db/mongo?retryWrites=true&w=majority&authSource=admin&replicaSet=my-replica&directConnection=true
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=ghost
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=testing
+      - ME_CONFIG_BASICAUTH_USERNAME=ghost
+      - ME_CONFIG_BASICAUTH_PASSWORD=testing
+      # - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+      # - ME_CONFIG_MONGODB_DATABASE=mongo
+    networks: 
+      - slb-network
+    depends_on:
+      - db
+
+volumes:
+  caddy_data:
+    external: true
+  db-data:
+    
+networks:
+  slb-network:
