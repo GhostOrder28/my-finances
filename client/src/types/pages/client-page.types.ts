@@ -1,4 +1,4 @@
-import { ClientResBody } from '#backend/client.types';
+import { ClientResBody } from '../../types/entities/client.types';
 
 type Props = {
   clientname: string;

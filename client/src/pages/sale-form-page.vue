@@ -102,11 +102,11 @@
 import Icon from '@/components/icon.vue'
 import { format } from 'date-fns'
 import DatePicker from 'vue-datepicker-next'
-import 'vue-datepicker-next/index.css';
+import 'vue-datepicker-next/index.css'
 import { defineComponent } from 'vue'
 import { State, Methods, Refs } from '@/types/pages/sale-form-page.types'
 import { Empty } from '@/types/global.types'
-import { SaleFormData, isSalePostReqBody } from '#backend/sale.types'
+import { SaleFormData, isSalePostReqBody } from '../types/entities/sale.types'
 import FormButtons from '@/components/form-buttons.vue'
 import http from '@/utils/axios-instance'
 import { isAxiosError } from 'axios'

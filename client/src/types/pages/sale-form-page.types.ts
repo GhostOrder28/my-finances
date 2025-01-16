@@ -2,7 +2,7 @@ import {
   SalePostReqBody, 
   SalePatchReqBody, 
   Item,
-} from "#backend/sale.types";
+} from "../../types/entities/sale.types";
 import SaleFormPage from '@/pages/sale-form-page.vue'
 
 import { FormErrors } from "../global.types";

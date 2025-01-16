@@ -58,8 +58,8 @@ import { format } from 'date-fns'
 import { defineComponent } from 'vue';
 import { State, Methods, Refs } from '@/types/pages/payment-form-page.types'
 import { Empty } from '@/types/global.types';
-import { SaleDataForPaymentForm } from '#backend/sale.types';
-import { PaymentEditionData } from '#backend/payment.types';
+import { SaleDataForPaymentForm } from '../types/entities/sale.types';
+import { PaymentEditionData } from '../types/entities/payment.types';
 import FormButtons from '@/components/form-buttons.vue'
 import DatePicker from 'vue-datepicker-next'
 import 'vue-datepicker-next/index.css';

@@ -1,4 +1,4 @@
-import { ClientListItem } from '#backend/client.types';
+import { ClientListItem } from '../../types/entities/client.types';
 
 type State = {
   receivables: number;

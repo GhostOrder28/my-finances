@@ -1,4 +1,4 @@
-import { SignupData } from '#backend/auth.types';
+import { SignupData } from '../../types/entities/auth.types';
 
 type AuthErrors = {
   authorizationError?: string;

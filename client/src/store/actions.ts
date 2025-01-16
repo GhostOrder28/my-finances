@@ -1,9 +1,9 @@
 import { ActionContext, Commit } from 'vuex';
-import { AuthenticationError } from '../../../server/src/errors/server-errors';
+import { AuthenticationError } from '@/errors/auth.errors';
 import { isAxiosError } from 'axios';
 import store from './index';
 import { UserData } from '@/types/store/state.types';
-import { UserCredentials, SignupData } from '#backend/auth.types'
+import { UserCredentials, SignupData } from '@/types/entities/auth.types'
 import http from '@/utils/axios-instance';
 
 async function signinUser ({ commit }: ActionContext<UserData, UserData>, userCredentials: UserCredentials) {

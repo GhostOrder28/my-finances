@@ -1,11 +1,11 @@
-import { Payment } from '#backend/payment.types';
-import { ClientAndSaleResBody } from '#backend/sale.types';
+import { Payment } from '../../types/entities/payment.types';
+import { ClientAndSaleResBody } from '../../types/entities/sale.types';
 
 type State = {
   displayPaymentDeletionConfirmation: boolean;
   displaySaleDeletionConfirmation: boolean;
   paymentToDelete: string | undefined;
-  pressTimeoutId: NodeJS.Timeout | undefined;
+  pressTimeoutId: number | undefined;
   clientData: ClientAndSaleResBody | undefined;
   currentView: string;
   tbodyHeight: number;

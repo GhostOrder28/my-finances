@@ -169,9 +169,9 @@ import { format } from 'date-fns'
 import EditButton from '@/components/edit-button.vue'
 import DeleteButton from '@/components/delete-button.vue'
 import BackLink from '@/components/back-link.vue'
-import { ClientAndSaleResBody } from '#backend/sale.types'
+import { ClientAndSaleResBody } from '../types/entities/sale.types'
 import Modal from '@/components/modal.vue'
-import { SaleAfterPayment } from '#backend/sale.types'
+import { SaleAfterPayment } from '../types/entities/sale.types'
 import Spinner from '@/components/spinner.vue'
 
 export default defineComponent<Empty, Empty, State, Empty, Methods>({

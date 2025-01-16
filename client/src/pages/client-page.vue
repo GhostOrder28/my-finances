@@ -118,7 +118,7 @@ import EditButton from '@/components/edit-button.vue'
 import DeleteButton from '@/components/delete-button.vue'
 import { format } from 'date-fns'
 import Modal from '@/components/modal.vue'
-import { ClientResBody } from '#backend/client.types'
+import { ClientResBody } from '../types/entities/client.types'
 import Spinner from '@/components/spinner.vue'
 
 export default defineComponent<any, Empty, State, Empty, Methods>({

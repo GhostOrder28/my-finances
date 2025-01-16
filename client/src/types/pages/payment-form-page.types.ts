@@ -1,4 +1,4 @@
-import { PaymentPostReqBody, PaymentPatchReqBody, PaymentEditionData } from "#backend/payment.types"
+import { PaymentPostReqBody, PaymentPatchReqBody, PaymentEditionData } from "../../types/entities/payment.types"
 import FormButtons from '@/components/form-buttons.vue'
 import { FormErrors } from "../global.types"
 

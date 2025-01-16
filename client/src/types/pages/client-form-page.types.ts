@@ -1,4 +1,4 @@
-import { ClientEditableFields } from '#backend/client.types';
+import { ClientEditableFields } from '../../types/entities/client.types';
 import FormButtons from '@/components/form-buttons.vue'
 
 type State = {

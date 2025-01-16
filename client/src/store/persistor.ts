@@ -1,5 +1,5 @@
 import VuexPersistence from "vuex-persist";
-import { User } from '#backend/user.types';
+import { User } from "@/types/entities/user.types";
 // import { initialState } from "./state";
 
 const vuexPersistor = new VuexPersistence<Pick<User, 'username' | 'email'>>({

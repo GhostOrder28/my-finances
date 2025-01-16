@@ -40,11 +40,11 @@ import PopupButton from '@/components/popup-button.vue'
 import StatItem from '@/components/stat-item.vue'
 import { getReferenceHeight } from '@/utils/utility-functions'
 import http from '@/utils/axios-instance'
-import { ClientListItem } from '#backend/client.types'
+import { ClientListItem } from '../types/entities/client.types'
 import { defineComponent } from 'vue'
 import { State, Methods, Refs } from '@/types/pages/client-list-page.types'
 import { Empty } from '@/types/global.types'
-import { UserAssets } from '#backend/user.types'
+import { UserAssets } from '../types/entities/user.types'
 import Spinner from '@/components/spinner.vue'
 
 // mocks
