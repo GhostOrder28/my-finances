@@ -43,7 +43,7 @@ async function patchUserAssets (data: ChangeStreamDocument<Client> | string) {
     userId = data
   };
 
-  if (updateFields?.clientSalesValue || updateFields?.currentDebt || isString(data)) {
+  if (updateFields?.clientSalesValue || updateFields?.currentDebt !== undefined || isString(data)) {
     try {
       const [ userAssets ] = await clientsCollection.aggregate([
         {
