@@ -2,6 +2,8 @@ FROM node:18-alpine as base
 
 WORKDIR /app
 
+ARG VUE_APP_API_BASE_URL
+
 COPY . .
 
 RUN npm install --include=dev
