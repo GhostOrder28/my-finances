@@ -60,6 +60,7 @@ async function signoutUser ({ commit }: { commit: Commit }) {
 
 async function requestGuest () {
   try {
+    console.log(`calling: ${process.env.VUE_APP_API_BASE_URL}/guests`);
     const res = await http.get('/guests')
     console.log('new user credentials', res.data.userCredentials);
     await store.dispatch('signinUser', {
